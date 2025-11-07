@@ -3429,16 +3429,29 @@ bomb_countdown()
 	self endon("bomb_defused");
 	level endon("intermission");
 	
-	level.bombmodel playLoopSound("bomb_tick");
+	//level.bombmodel playLoopSound("bomb_tick"); REMOVED FOR INCREASED BOMB TICK SPEED
 	
 	//CODUO NA COMP ADDITION - bomb timer color change
 	currframe = 1;
 	endframe = level.countdowntime * 20;
+	tickframe = 0;
+	startInt = 40;
+	endInt = 10;
+	curInt = startInt;
 	
+	level.bombmodel playsound("bomb_tick");
 	
 	while( currframe <= endframe )
 	{
 		progress = currframe / endframe;
+		
+		if(tickframe >= curInt)
+		{
+			level.bombmodel playsound("bomb_tick");
+			curInt = startInt + (endInt - startInt) * progress;
+			curInt = (int)CurInt;
+			tickframe = 0;
+		}
 		
 		startR = level.countdowntimerstartcolor[0];
 		startG = level.countdowntimerstartcolor[1];
@@ -3457,8 +3470,9 @@ bomb_countdown()
 		else
 			level.hudplanted.color = ( currR, currG, currB);
 		
-		wait 0.5;
-		currframe += 10;
+		wait 0.05;
+		currframe += 1;
+		tickframe += 1;
 	}
 	// set the countdown time
 	//wait level.countdowntime;
