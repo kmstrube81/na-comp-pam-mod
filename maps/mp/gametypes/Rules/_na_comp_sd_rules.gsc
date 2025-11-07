@@ -19,7 +19,7 @@ Rules()
 	if (getcvarint("g_ot_active") > 0)
 	{
 		setcvar("scr_sd_half_round" , "3");	// Switch AFTER this round.
-
+		setcvar("scr_sd_end_score" , "4");		// End Map AFTER this total score.
 		setcvar("scr_sd_end_round" , "6");		// End Map AFTER this round.
 	}
 
@@ -31,7 +31,7 @@ Rules()
 	setcvar("scr_sd_scorelimit" , "0");
 	setcvar("scr_sd_timelimit" , "0");
 	setcvar("scr_sd_roundlimit" , "0");
-	setcvar("scr_sd_roundlength" , "2");
+	setcvar("scr_sd_roundlength" , "2.25");
 	setcvar("scr_sd_graceperiod", "3");
 
 	// Shellshock 
@@ -46,7 +46,7 @@ Rules()
 	setcvar("scr_rank_ppr" , "10"); //Sets the Points Per Rank
 
 	// Hostname and MOTD 
-	setcvar("sv_hostname" , "NA COMP LEAGUE"); 
+	setcvar("sv_hostname" , "NA Competitive League"); 
 	setcvar("scr_motd" , "Wigglin' ma shit rn"); 
 
 	//Logo
@@ -208,10 +208,10 @@ Rules()
 	// *****************************************************
 	// ****************** Timeouts *************************
 	// *****************************************************
-	setcvar("g_timeoutsAllowed", "1"); //The number of timeouts allowed per side. 
-	setcvar("g_timeoutLength", "3"); //The length of each timeout. 
-	setcvar("g_timeoutRecovery", "0"); //The length of the preparation period which occurs after a time-in is called, or after a timeout expires.  This recovery period is used to alert all players that play is about to begin. 
-	setcvar("g_timeoutBank", "9"); //The total amount of time a team can spend in timeout.
+	setcvar("g_timeoutsAllowed", "3"); //The number of timeouts allowed per side.
+	setcvar("g_timeoutLength", "60000"); //The length of each timeout.
+	setcvar("g_timeoutRecovery", "10000"); //The length of the preparation period which occurs after a time-in is called, or after a timeout expires.  This recovery period is used to alert all players that play is about to begin.
+	setcvar("g_timeoutBank", "180000"); //The total amount of time a team can spend in timeout.
 
 
 	// *****************************************************
