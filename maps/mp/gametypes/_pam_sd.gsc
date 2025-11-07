@@ -179,6 +179,9 @@ PamMain()
 		case "na_comp":
 			thread maps\mp\gametypes\rules\_na_comp_sd_rules::Rules();
 			break;
+		case "na_comp_pub":
+			thread maps\mp\gametypes\rules\_na_comp_pub_sd_rules::Rules();
+			break;
 		case "lan":
 			thread maps\mp\gametypes\rules\_lan_sd_rules::Rules();
 			break;
@@ -238,6 +241,9 @@ PamMain()
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
 	level.playersleft = getcvarint("sv_playersleft");
+	//CODUO NA COMP ADDITION - AUTO READY
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
 	level.halfround = getcvarint("scr_sd_half_round");
 	level.halfscore = getcvarint("scr_sd_half_score");
 	level.matchround = getcvarint("scr_sd_end_round");
@@ -557,6 +563,7 @@ Callback_StartGameType()
 	maps\mp\gametypes\_pam_teams::initGlobalCvars();
 	maps\mp\gametypes\_pam_teams::initWeaponCvars();
 	maps\mp\gametypes\_pam_teams::restrictPlacedWeapons();
+	maps\mp\gametypes\_corrupt_killcam::corrupt_StartGameType();
 	thread maps\mp\gametypes\_pam_teams::updateGlobalCvars();
 	thread maps\mp\gametypes\_pam_teams::updateWeaponCvars();
 
@@ -585,6 +592,8 @@ Callback_PlayerConnect()
 	level.R_U_Name[lpselfnum] = self.name;
 	level.R_U_State[lpselfnum] = "notready";
 	self.R_U_Looping = 0;
+
+	self thread maps\mp\gametypes\_pam_round_report::onConnected();
 
 	if(level.rdyup == 1)
 	{
@@ -978,7 +987,9 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	// Don't do knockback if the damage direction was not specified
 	if(!isDefined(vDir))
 		iDFlags |= level.iDFLAGS_NO_KNOCKBACK;
-
+	
+	self thread maps\mp\gametypes\_pam_round_report::onPlayerDamaged(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc);
+	
 	// check for completely getting out of the damage
 //	if(!(iDFlags & level.iDFLAGS_NO_PROTECTION))
 	{
@@ -1108,7 +1119,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	// send out an obituary message to all clients about the kill
 	obituary(self, attacker, sWeapon, sMeansOfDeath);
-
+	
+	self thread maps\mp\gametypes\_pam_round_report::onPlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc);
+	
 	self.sessionstate = "dead";
 	if(level.rdyup != 1)
 		self.statusicon = "gfx/hud/hud@status_dead.tga";
@@ -1134,6 +1147,10 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		if(attacker == self) // killed himself
 		{
 			doKillcam = false;
+			if(self.pers["team"] == "allies")
+				level.alliesLastKilled = false;
+			else if(self.pers["team"] == "axis")
+				level.axisLastKilled = false;
 			if (!isdefined (self.autobalance))
 			{
 				attacker.pers["score"]--;
@@ -1168,7 +1185,11 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	else // If you weren't killed by a player, you were in the wrong place at the wrong time
 	{
 		doKillcam = false;
-
+		if(self.pers["team"] == "allies")
+			level.alliesLastKilled = false;
+		else if(self.pers["team"] == "axis")
+			level.axisLastKilled = false;
+		
 		self.pers["score"]--;
 		self.score = self.pers["score"];
 
@@ -1179,6 +1200,30 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	}
 
 	logPrint("K;" + lpselfguid + ";" + lpselfnum + ";" + lpselfteam + ";" + lpselfname + ";" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + sWeapon + ";" + iDamage + ";" + sMeansOfDeath + ";" + sHitLoc + "\n");
+
+	if(level.numexist[self.pers["team"]] > 3 )
+	{
+		if(isPlayer(attacker))
+		{
+			if(!isDefined(level.acesituation[attacker.pers["team"]]))
+			{
+				level.acesituation[attacker.pers["team"]] = true;
+				level.aceplayer[attacker.pers["team"]] = attacker;
+			}
+			else if(level.acesituation[attacker.pers["team"]])
+			{
+				if(level.aceplayer[attacker.pers["team"]] != attacker)
+				{
+					level.acesituation[attacker.pers["team"]] = false;
+				}
+			}
+		} else {
+			if(self.pers["team"] == "allies")
+				level.acesituation["axis"] = false;
+			if(self.pers["team"] == "axis")
+				level.acesituation["allies"] = false;
+		}
+	}
 
 	// Make the player drop his weapon
 	if (!isdefined (self.autobalance))
@@ -1206,14 +1251,155 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	delay = 2;	// Delay the player becoming a spectator till after he's done dying
 	wait delay;	// ?? Also required for Callback_PlayerKilled to complete before killcam can execute
 
-	if(doKillcam && !level.roundended)
+	if(doKillcam)
 		self thread killcam(attackerNum, delay);
 	else
 	{
-		currentorigin = self.origin;
-		currentangles = self.angles;
+		if(!level.roundended)
+		{
+			currentorigin = self.origin;
+			currentangles = self.angles;
+			level.specmode = "death";
+			level.z_rpam_player_specmode = "death";
+			level.z_rpam_spec_specmode = "death";
 
-		self thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+			self thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+		}
+		else if(game["matchstarted"] && game["doFinalKillcam"])
+		{
+			if((isPlayer(attacker)) && attacker != self)  //if killed by self or world don't do final killcam
+			{
+
+				logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "final_killcam" + "\n");
+				game["finaldelay"] = getTime();
+				level waittill("postround");
+				delay = delay + game["finaldelay"];
+				level endon("corrupt_killcam");
+
+				players = getentarray("player", "classname");
+				for(i = 0; i < players.size; i++)
+				{	
+					player = players[i];
+					
+					player notify("end_killcam");
+					
+					if(isDefined(player.pers["team"]) && player.pers["team"] != "spectator" && player.sessionstate == "playing")
+					{
+						primary = player getWeaponSlotWeapon("primary");
+						primaryb = player getWeaponSlotWeapon("primaryb");
+
+						// If a menu selection was made let's check pam rules first
+						if(getCvar("rpam_riflesonly") == "0")
+						{
+							if(isDefined(player.oldweapon))
+							{
+								// If a new weapon has since been picked up (this fails when a player picks up a weapon the same as his original)
+								if(player.oldweapon != primary && player.oldweapon != primaryb && primary != "none")
+								{
+									player.pers["weapon1"] = primary;
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player getCurrentWeapon();
+								} // If the player's menu chosen weapon is the same as what is in the primaryb slot, swap the slots
+								else if(player.pers["weapon"] == primaryb)
+								{
+									player.pers["weapon1"] = primaryb;
+									player.pers["weapon2"] = primary;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								} // Give them the weapon they chose from the menu
+								else
+								{
+									player.pers["weapon1"] = player.pers["weapon"];
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								}
+							} // No menu choice was ever made, so keep their weapons and spawn them with what they're holding, unless it's a pistol or grenade
+							else
+							{
+								if(primary == "none")
+									player.pers["weapon1"] = player.pers["weapon"];
+								else
+									player.pers["weapon1"] = primary;
+									
+								player.pers["weapon2"] = primaryb;
+
+								spawnweapon = player getCurrentWeapon();
+								if ( (spawnweapon == "none") && (isdefined (primary)) ) 
+									spawnweapon = primary;
+
+								if(!maps\mp\gametypes\_pam_teams::isPistolOrGrenade(spawnweapon))
+									player.pers["spawnweapon"] = spawnweapon;
+								else
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+							}
+						}
+						else if(getCvar("rpam_riflesonly") == "1")
+						{
+							if(isDefined(player.oldweapon))
+							{
+								// If a new weapon has since been picked up (this fails when a player picks up a weapon the same as his original)
+								if(player.oldweapon != primary && player.oldweapon != primaryb && primary != "none")
+								{
+									player.pers["weapon1"] = kar98k_mp;
+									player.pers["weapon2"] = mosin_nagant_mp;
+									player.pers["spawnweapon"] = player getCurrentWeapon();
+								} // If the player's menu chosen weapon is the same as what is in the primaryb slot, swap the slots
+								else if(player.pers["weapon"] == primaryb)
+								{
+									player.pers["weapon1"] = kar98k_mp;
+									player.pers["weapon2"] = mosin_nagant_mp;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								} // Give them the weapon they chose from the menu
+								else
+								{
+									player.pers["weapon1"] = player.pers["weapon"];
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								}
+							} // No menu choice was ever made, so keep their weapons and spawn them with what they're holding, unless it's a pistol or grenade
+							else
+							{
+								if(primary == "none")
+									player.pers["weapon1"] = player.pers["weapon"];
+								else
+									player.pers["weapon1"] = primary;
+									
+								player.pers["weapon2"] = primaryb;
+
+								spawnweapon = player getCurrentWeapon();
+								if ( (spawnweapon == "none") && (isdefined (primary)) ) 
+									spawnweapon = primary;
+
+								if(!maps\mp\gametypes\_pam_teams::isPistolOrGrenade(spawnweapon))
+									player.pers["spawnweapon"] = spawnweapon;
+								else
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+							}
+						}
+					}
+	
+						
+					if(player == self)
+						continue;
+					
+					if(player.sessionstate != "dead")
+					{
+						currentorigin = self.origin;
+						currentangles = self.angles;
+						level.specmode = "death";
+						level.z_rpam_player_specmode = "death";
+						level.z_rpam_spec_specmode = "death";
+
+						player thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+					}
+					player thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 1);
+					player thread maps\mp\gametypes\_corrupt_killcam::corrupt_killcam(attackerNum, delay);
+
+				}
+			
+				maps\mp\gametypes\_corrupt_killcam::corrupt_killcam(attackerNum, delay);
+			}
+			level notify("corrupt_killcam_over");
+		}
 	}
 }
 
@@ -1866,8 +2052,11 @@ resetScores()
 
 }
 
-endRound(roundwinner)
+endRound(roundwinner, doKillcam)
 {
+	if(!isDefined(doKillcam))
+		doKillcam = false;
+	
 	level.switchprevent = false;
 	level endon("kill_endround");
 
@@ -1953,8 +2142,26 @@ endRound(roundwinner)
 			else if((isdefined(players[i].pers["team"])) && (players[i].pers["team"] == "axis"))
 				losers = (losers + ";" + lpGuid + ";" + players[i].name);
 		}
-		logPrint("W;allies" + winners + "\n");
-		logPrint("L;axis" + losers + "\n");
+		if(level.clutchsituation["allies"])
+		{
+			lpattackname = level.clutchplayer["allies"].name;
+			lpattackerteam = "allies";
+			lpattackguid = level.clutchplayer["allies"] getGuid();
+			lpattacknum = level.clutchplayer["allies"] getEntityNumber();
+			logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "sd_clutch" + "\n");
+		} 
+		
+		if(level.acesituation["allies"])
+		{
+			lpattackname = level.aceplayer["allies"].name;
+			lpattackerteam = "allies";
+			lpattackguid = level.aceplayer["allies"] getGuid();
+			lpattacknum = level.aceplayer["allies"] getEntityNumber();
+			logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "sd_ace" + "\n");
+		}
+
+		logPrint("RW;allies" + winners + "\n");
+		logPrint("RL;axis" + losers + "\n");
 	}
 	else if(roundwinner == "axis")
 	{
@@ -1983,9 +2190,30 @@ endRound(roundwinner)
 			else if((isdefined(players[i].pers["team"])) && (players[i].pers["team"] == "allies"))
 				losers = (losers + ";" + lpGuid + ";" + players[i].name);
 		}
-		logPrint("W;axis" + winners + "\n");
-		logPrint("L;allies" + losers + "\n");
+		if(level.clutchsituation["axis"])
+		{
+			lpattackname = level.clutchplayer["axis"].name;
+			lpattackerteam = "axis";
+			lpattackguid = level.clutchplayer["axis"] getGuid();
+			lpattacknum = level.clutchplayer["axis"] getEntityNumber();
+			logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "sd_clutch" + "\n");
+		}
+		
+		if(level.acesituation["axis"])
+		{
+			lpattackname = level.aceplayer["axis"].name;
+			lpattackerteam = "axis";
+			lpattackguid = level.aceplayer["axis"] getGuid();
+			lpattacknum = level.aceplayer["axis"] getEntityNumber();
+			logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "sd_ace" + "\n");
+		}
+		
+		logPrint("RW;axis" + winners + "\n");
+		logPrint("RL;allies" + losers + "\n");
 	}
+
+	// Print damage stats
+	maps\mp\gametypes\_pam_round_report::printToAll();
 
 	if(game["matchstarted"])
 	{
@@ -2067,6 +2295,11 @@ endRound(roundwinner)
 		}
 	}
 
+	level notify("postround");
+	game["finaldelay"] = (getTime() - game["finaldelay"]) / 1000;
+	if(doKillcam)
+		level waittill("corrupt_killcam_over");
+
 	if ( (level.teambalance > 0) && (game["BalanceTeamsNextRound"]) )
 	{
 		level.lockteams = true;
@@ -2129,22 +2362,58 @@ endMap()
 	if(isdefined(level.bombmodel))
 		level.bombmodel stopLoopSound();
 
+	winner = "draw";
+	
+
 	if(game["alliedscore"] == game["axisscore"])
+	{
 		text = &"MPSCRIPT_THE_GAME_IS_A_TIE";
+	}
 	else if(game["alliedscore"] > game["axisscore"])
+	{
 		text = &"MPSCRIPT_ALLIES_WIN";
+		winner = "allies";
+	}
 	else
+	{
 		text = &"MPSCRIPT_AXIS_WIN";
+		winner = "axis";
+	}
+
+	winners = "";
+	losers = "";
 
 	players = getentarray("player", "classname");
 	for(i = 0; i < players.size; i++)
 	{
 		player = players[i];
 
+		lpGuid = players[i] getGuid();
+		if((isdefined(players[i].pers["team"])) && (players[i].pers["team"] == "allies"))
+		{
+			if(winner == "allies")
+				winners = (winners + ";" + lpGuid + ";" + players[i].name);
+			else if(winner == "axis")
+				losers = (losers + ";" + lpGuid + ";" + players[i].name);
+		}
+		else if((isdefined(players[i].pers["team"])) && (players[i].pers["team"] == "axis"))
+		{
+			if(winner == "axis")
+				winners = (winners + ";" + lpGuid + ";" + players[i].name);
+			else if(winner == "allies")
+				losers = (losers + ";" + lpGuid + ";" + players[i].name);
+		}
+		
 		player closeMenu();
 		player setClientCvar("g_scriptMainMenu", "main");
 		player setClientCvar("cg_objectiveText", text);
 		player spawnIntermission();
+	}
+
+	if(winner != "draw")
+	{
+		logPrint("W;axis" + winners + "\n");
+		logPrint("L;allies" + losers + "\n");
 	}
 
 	if (game["mode"] == "match")
@@ -3090,7 +3359,13 @@ updateTeamStatus()
 		player = players[i];
 		
 		if(isDefined(player.pers["team"]) && player.pers["team"] != "spectator" && player.sessionstate == "playing")
+		{
 			level.exist[player.pers["team"]]++;
+			if(player.pers["team"] == "allies")
+				lastAlliesPlayer = player;
+			if(player.pers["team"] == "axis")
+				lastAxisPlayer = player;
+		}
 	}
 
 	if(getcvar("sv_playersleft") == "1")
@@ -3158,7 +3433,24 @@ updateTeamStatus()
 
 	if(level.roundended)
 		return;
-
+	
+	if(!isDefined(level.clutchsituation["allies"]))
+		level.clutchsituation["allies"] = false;
+	if(!isDefined(level.clutchsituation["axis"]))
+		level.clutchsituation["axis"] = false;
+	
+	if(level.exist["allies"] == 1 && level.exist["axis"] > 2)
+	{
+		level.clutchsituation["allies"] = true;
+		level.clutchplayer["allies"] = lastAlliesPlayer;
+	}
+	
+	if(level.exist["axis"] == 1 && level.exist["allies"] > 2)
+	{
+		level.clutchsituation["axis"] = true;
+		level.clutchplayer["axis"] = lastAxisPlayer;
+	}
+	
 	if(oldvalue["allies"] && !level.exist["allies"] && oldvalue["axis"] && !level.exist["axis"])
 	{
 		if(!level.bombplanted)
@@ -3186,7 +3478,7 @@ updateTeamStatus()
 		if(!level.bombplanted)
 		{
 			announcement(&"SD_ALLIESHAVEBEENELIMINATED");
-			level thread endRound("axis");
+			level thread endRound("axis", level.alliesLastKilled);
 			return;
 		}
 
@@ -3197,7 +3489,7 @@ updateTeamStatus()
 		if(level.exist["axis"])
 		{
 			announcement(&"SD_ALLIESHAVEBEENELIMINATED");
-			level thread endRound("axis");
+			level thread endRound("axis", level.alliesLastKilled);
 			return;
 		}
 
@@ -3212,7 +3504,7 @@ updateTeamStatus()
 		if(!level.bombplanted)
 		{
 			announcement(&"SD_AXISHAVEBEENELIMINATED");
-			level thread endRound("allies");
+			level thread endRound("allies", level.axisLastKilled);
 			return;
  		}
  		
@@ -3223,7 +3515,7 @@ updateTeamStatus()
 		if(level.exist["allies"])
 		{
 			announcement(&"SD_AXISHAVEBEENELIMINATED");
-			level thread endRound("allies");
+			level thread endRound("allies", level.axisLastKilled);
 			return;
 		}
 		

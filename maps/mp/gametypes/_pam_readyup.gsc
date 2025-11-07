@@ -163,6 +163,22 @@ readyup(entity)
 
 	playername = level.R_U_Name[entity];
 	wait 1;
+	
+	if(level.autoreadytime)
+	{
+		if(!isDefined(level.clock))
+		{
+			level.clock = newHudElem();
+			level.clock.x = 320;
+			level.clock.y = 460;
+			level.clock.alignX = "center";
+			level.clock.alignY = "middle";
+			level.clock.font = "bigfixed";
+		}
+		level.clock setTimer(level.autoreadytime);
+
+		startTime = getTime();
+	}
 
 	while(!level.playersready)
 	{
@@ -208,6 +224,16 @@ readyup(entity)
 			self.R_U_Looping = 0;
 			level.R_U_Name[entity] = "disconnected";
 			return;
+		}
+		if(level.autoreadycount)
+		{
+			if(level.exist["allies"] >= level.autoreadycount && level.exist["axis"] >= level.autoreadycount)
+				level.playersready = 1;
+		}
+		if(isDefined(startTime))
+		{
+			if((getTime() - startTime) / 1000.0 > level.autoreadytime)
+				level.playersready = 1;
 		}
 	}
 
