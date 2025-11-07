@@ -4551,9 +4551,15 @@ HUD_Bomb_Planted()
 	level.hudplanted.x = 320;
 	
 	if(level.countdownclock)
-		level.hudplanted.y = 460;
-	else
+	{
+		level.hudplanted.x = 320;
 		level.hudplanted.y = 390;
+	}
+	else
+	{
+		level.hudplanted.x = 280;
+		level.hudplanted.y = 460;
+	}
 	level.hudplanted.alignX = "center";
 	level.hudplanted.alignY = "middle";
 	level.hudplanted.fontScale = 1.5;
