@@ -3434,11 +3434,11 @@ bomb_countdown()
 	currframe = 1;
 	endframe = level.countdowntime * 20;
 	tickframe = 0;
-	startInt = 40;
-	endInt = 10;
+	startInt = 20;
+	endInt = 5;
 	curInt = startInt;
 	
-	level.bombmodel playsound("bomb_tick");
+	level.bombmodel playsound("minefield_click");
 	
 	while( currframe <= endframe )
 	{
@@ -3446,9 +3446,9 @@ bomb_countdown()
 		
 		if(tickframe >= curInt)
 		{
-			level.bombmodel playsound("bomb_tick");
+			level.bombmodel playsound("minefield_click");
 			curInt = startInt + (endInt - startInt) * progress;
-			curInt = (int)CurInt;
+			//curInt = (int)curInt;
 			tickframe = 0;
 		}
 		
