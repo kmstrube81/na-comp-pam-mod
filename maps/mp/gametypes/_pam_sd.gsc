@@ -3720,7 +3720,8 @@ bomb_countdown()
 	self endon("bomb_defused");
 	level endon("intermission");
 	
-	//level.bombmodel playLoopSound("bomb_tick"); REMOVED FOR INCREASED BOMB TICK SPEED
+	if(level.countdownclock)
+		level.bombmodel playLoopSound("bomb_tick"); REMOVED FOR INCREASED BOMB TICK SPEED
 	
 	//CODUO NA COMP ADDITION - bomb timer color change
 	currframe = 1;
@@ -3730,13 +3731,14 @@ bomb_countdown()
 	endInt = 5;
 	curInt = startInt;
 	
-	level.bombmodel playsound("minefield_click");
+	if(!level.countdownclock)
+		level.bombmodel playsound("minefield_click");
 	
 	while( currframe <= endframe )
 	{
 		progress = currframe / endframe;
 		
-		if(tickframe >= curInt)
+		if(!level.countdownclock && tickframe >= curInt)
 		{
 			level.bombmodel playsound("minefield_click");
 			curInt = startInt + (endInt - startInt) * progress;
