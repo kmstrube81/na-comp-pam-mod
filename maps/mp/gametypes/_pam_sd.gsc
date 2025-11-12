@@ -554,6 +554,8 @@ Callback_StartGameType()
 	
 	
 		maps\mp\gametypes\_pam_teams::precache();
+		maps\mp\gametypes\_playercard::precachePlayerCardElems();
+		maps\mp\gametypes\_playercard::precachePlayerCardElems();
 		maps\mp\gametypes\_pam_teams::scoreboard();
 
 		//thread addBotClients();
@@ -621,6 +623,11 @@ Callback_PlayerConnect()
 
 	// start the vsay thread
 	self thread maps\mp\gametypes\_pam_teams::vsay_monitor();
+	
+	//CODUO NA COMP ADDITION
+	//Disable playercards if sv_playercards not set
+	if(getCvar("sv_playercards") != 1)
+		self setClientCvar("ui_playercard","0");
 	
 	if(isDefined(self.pers["team"]) && self.pers["team"] != "spectator")
 	{
@@ -860,6 +867,10 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}		
 		else if(menu == game["menu_weapon_allies"] || menu == game["menu_weapon_axis"])
@@ -879,7 +890,12 @@ Callback_PlayerConnect()
 				self openMenu(game["menu_callvote"]);
 				continue;
 			}
-			
+			else if(response == "playercard")
+			{
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				continue;
+			}	
 			if(!isDefined(self.pers["team"]) || (self.pers["team"] != "allies" && self.pers["team"] != "axis"))
 				continue;
 
@@ -916,6 +932,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+			
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_callvote"])
@@ -936,6 +957,11 @@ Callback_PlayerConnect()
 			case "viewmap":
 				self openMenu(game["menu_viewmap"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_quickcommands"])
@@ -948,6 +974,8 @@ Callback_PlayerConnect()
 			maps\mp\gametypes\_pam_teams::quickvehicles(response);
 		else if(menu == game["menu_quickrequests"])
 			maps\mp\gametypes\_pam_teams::quickrequests(response);
+		else if(menu == game["menu_playercard"])
+			maps\mp\gametypes\_playercard::handleMenuResponse(response);
 	}
 }
 
@@ -1664,6 +1692,8 @@ spawnSpectator(origin, angles)
 		self setClientCvar("cg_objectiveText", &"SD_OBJ_SPECTATOR_ALLIESATTACKING");
 	else if(game["attackers"] == "axis")
 		self setClientCvar("cg_objectiveText", &"SD_OBJ_SPECTATOR_AXISATTACKING");
+	
+	self thread maps\mp\gametypes\_playercard::spectatePlayerCard();
 }
 
 spawnIntermission()
@@ -3721,7 +3751,7 @@ bomb_countdown()
 	level endon("intermission");
 	
 	if(level.countdownclock)
-		level.bombmodel playLoopSound("bomb_tick"); REMOVED FOR INCREASED BOMB TICK SPEED
+		level.bombmodel playLoopSound("bomb_tick"); //REMOVED FOR INCREASED BOMB TICK SPEED
 	
 	//CODUO NA COMP ADDITION - bomb timer color change
 	currframe = 1;
