@@ -1,5 +1,13 @@
 Rules()
 {
+	/* PUB OPTIONS			*/
+	setcvar("pam_autoreadytime", "30"); // Time in Seconds for players to autoready, set to 0 to disable
+	setcvar("pam_autoreadycount", "3"); // Number of players on each team required before autoready, set to 0 to disable
+
+	setcvar("scr_final_killcam", "1"); // Final Killcam enabled
+	
+	setcvar("sv_playercards", "1"); // Enable playercards
+
 	/* Match Setup Options */
 	setcvar("scr_ctf_scoringmethod", "captures");	// If set to 'round' it scores like stock CTF, 1 point per round win.
 
@@ -21,7 +29,7 @@ Rules()
 	setcvar("scr_ctf_scorelimit" , "0");
 	setcvar("scr_ctf_timelimit" , "0");
 	setcvar("scr_ctf_roundlimit" , "0");
-	setcvar("scr_ctf_roundlength" , "20");
+	setcvar("scr_ctf_roundlength" , "10");
 	setcvar("scr_ctf_startrounddelay" , "15");
 	setcvar("scr_ctf_endrounddelay" , "10");
 
@@ -46,11 +54,11 @@ Rules()
 	setcvar("scr_rank_ppr" , "10"); //Sets the Points Per Rank
 
 	// Hostname and MOTD 
-	setcvar("sv_hostname" , "TWL Match in Progress"); 
-	setcvar("scr_motd" , "PAMUO v3.1 TWL-Classic Ladder Match Mode v1.2");
+	setcvar("sv_hostname" , "NA Competitive Pub Server"); 
+	setcvar("scr_motd" , "Join us on discord: https://discord.gg/Yux9EXxTqP");
 
 	// Logo
-	game["leaguestring"] = &"TWL-Classic Ladder Match Mode v1.2";  //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
+	game["leaguestring"] = &"NA COMP Pub";  //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
 	
 
 	// *****************************************************
@@ -156,7 +164,8 @@ Rules()
 	setcvar("scr_allow_kar98k" , "1");
 	setcvar("scr_allow_m1garand" , "1");
 	setcvar("scr_allow_nagant" , "1");
-	setcvar("scr_allow_gewehr43" , "0");
+	setcvar("scr_allow_us_nagant" , "1");
+	setcvar("scr_allow_gewehr43" , "1");
 
 
 	//Snipers
@@ -167,7 +176,7 @@ Rules()
 	setcvar("scr_allow_kar98ksniper" , "1");
 	setcvar("scr_allow_nagantsniper" , "1");
 	setcvar("scr_allow_springfield" , "1");
-	setcvar("scr_allow_svt40" , "0");
+	setcvar("scr_allow_svt40" , "1");
 	setcvar("scr_allow_fg42" , "0");
 
 	// MGs
@@ -198,9 +207,9 @@ Rules()
 	setcvar("sv_alliedDMGLimit", "0"); // allied deployable mg limit
 	setcvar("sv_axisDMGLimit", "0"); // axis deployable mg limit
 
-	setcvar("scr_allow_mg34" , "0");
-	setcvar("scr_allow_dp28" , "0");
-	setcvar("scr_allow_mg30cal" , "0");
+	setcvar("scr_allow_mg34" , "1");
+	setcvar("scr_allow_dp28" , "1");
+	setcvar("scr_allow_mg30cal" , "1");
 
 	// Pistols
 	setcvar("scr_allow_pistols" , "1");
@@ -251,10 +260,10 @@ Rules()
 	// ************************************************
 
 	// HTTP Setup 
-	setcvar("sv_wwwDownload" , "0");
-	setcvar("sv_wwwBaseURL" , ""); 
-	setcvar("sv_wwwDlDisconnected", "0");
-	setcvar("sv_allowdownload", "0");
+	//setcvar("sv_wwwDownload" , "0");
+	//setcvar("sv_wwwBaseURL" , ""); 
+	//setcvar("sv_wwwDlDisconnected", "0");
+	//setcvar("sv_allowdownload", "0");
 
 	//SV Pure
 	setcvar("sv_pure", "1");

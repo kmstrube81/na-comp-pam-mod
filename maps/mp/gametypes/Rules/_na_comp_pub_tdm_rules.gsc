@@ -1,52 +1,43 @@
 Rules()
 {
-	/* DISABLE PUB OPTIONS			*/
-	setcvar("pam_autoreadytime", "0"); // Time in Seconds for players to autoready, set to 0 to disable
-	setcvar("pam_autoreadycount", "0"); // Number of players on each team required before autoready, set to 0 to disable
 
-	setcvar("scr_final_killcam", "0"); // Final Killcam enabled
+	/* PUB OPTIONS			*/
+	setcvar("pam_autoreadytime", "30"); // Time in Seconds for players to autoready, set to 0 to disable
+	setcvar("pam_autoreadycount", "3"); // Number of players on each team required before autoready, set to 0 to disable
+
+	setcvar("scr_final_killcam", "1"); // Final Killcam enabled
 	
-	setcvar("sv_playercards", "0"); // Enable playercards
+	setcvar("sv_playercards", "1"); // Enable playercards
 	
 	/* Match Setup Options */
-	setcvar("scr_sd_half_round" , "10");	// Switch AFTER this round.
+	setcvar("scr_teamscorepenalty", "1");	// TK's, Suicides, and other non-enemy-caused deaths take points from teams
 
-	setcvar("scr_sd_half_score" , "0");	// Switch AFTER this score.
+	setcvar("scr_tdm_half_time" , "10");	// Switch AFTER this amount of time. 0 = Don't switch and scr_tdm_timelimit is used.
 
-	setcvar("scr_sd_end_round" , "20");	// End Map AFTER this round.
+	setcvar("scr_tdm_half_score" , "0");	// Switch AFTER this score. NOT IMPLEMENTED
 
-	setcvar("scr_sd_end_score" , "11");		// End Map AFTER this total score.
+	setcvar("scr_tdm_end_score" , "0");		// End Map AFTER this total score. NOT IMPLEMENTED
 
-	setcvar("scr_sd_end_half2score" , "0"); // End Map AFTER this 2nd-half score.
+	setcvar("scr_tdm_end_half2score" , "0");	// End Map AFTER this 2nd-half score. NOT IMPLEMENTED
 
-	setcvar("scr_sd_count_draws", "1");	// Re-play rounds that end in a draw
-
-	setcvar("g_ot", "1");	// Are there Overtime rules for this match? 0=No / 1=Yes
-	
-	// Overtime Settings
-	if (getcvarint("g_ot_active") > 0)
-	{
-		setcvar("scr_sd_half_round" , "3");	// Switch AFTER this round.
-		setcvar("scr_sd_end_score" , "4");		// End Map AFTER this total score.
-		setcvar("scr_sd_end_round" , "6");		// End Map AFTER this round.
-	}
+	setcvar("scr_tdm_dohalftime", "1"); // Are there 2 halves? 1=yes
 
 	// *****************************************************
 	// *********** Stock Match Config Cvars ****************
 	// *****************************************************
 	
-	// S&D Settings 
-	setcvar("scr_sd_scorelimit" , "0");
-	setcvar("scr_sd_timelimit" , "0");
-	setcvar("scr_sd_roundlimit" , "0");
-	setcvar("scr_sd_roundlength" , "2.25");
-	setcvar("scr_sd_graceperiod", "3");
+	// TDM Settings 
+	setcvar("scr_tdm_scorelimit" , "0");
+	setcvar("scr_tdm_timelimit" , "0");
+
+	//Force Respawn
+	setcvar("scr_forcerespawn", "0"); // Forces you to respawn within this many seconds.
 
 	// Shellshock 
 	setcvar("scr_shellshock" , "0");
 
 	// Health Drop 
-	setcvar("scr_drophealth" , "0");
+	setcvar("scr_drophealth" , "1");
 
 	// Battleranks 
 	setcvar("scr_battlerank" , "0");
@@ -54,35 +45,36 @@ Rules()
 	setcvar("scr_rank_ppr" , "10"); //Sets the Points Per Rank
 
 	// Hostname and MOTD 
-	setcvar("sv_hostname" , "NA Competitive League"); 
-	setcvar("scr_motd" , "Wigglin' ma shit rn"); 
+	setcvar("sv_hostname" , "NA Competitive Pub Server"); 
+	setcvar("scr_motd" , "Join us on discord: https://discord.gg/Yux9EXxTqP");
 
-	//Logo
-	game["leaguestring"] = &"NA COMP League"; //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
+	// Logo
+	game["leaguestring"] = &"NA COMP Pub";  //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
 	
-
 
 	// *****************************************************
 	// ********** PAM UO Match Config Cvars ****************
 	// *****************************************************
 	// OT settings
-	setCvar("scr_randomsides", "0");	// Choose Random Sides for us if we need OT - Not implemented in SD yet
+	setcvar("g_ot", "0");	// Are there Overtime rules for this match? 0=No / 1=Yes
+	setcvar("scr_tdm_allowmatchtie", "1");	// Do we allow a match to end in a Tie 0=NO (go to sudden death!) 1=YES (For OT or Match Ties) NOT IMPLEMENTED
+	setCvar("scr_randomsides", "1");	// Choose Random Sides for us if we need OT
 
-	// Bomb Settings
-	setcvar("sv_BombPlantTime", "7");
-	setcvar("sv_BombDefuseTime", "10");
-	setcvar("sv_BombTimer", "60");
-	setcvar("sv_ShowBombTimer", 1); //CODUO NA COMP PAM ADDITION
+	if (getcvarint("g_ot_active") > 0)
+	{
+		setcvar("scr_tdm_dohalftime", "0");
+		setcvar("scr_tdm_scorelimit" , "15");
+		setcvar("g_ot", "0");
+	}
 
 	// Timers
 	setcvar("g_roundwarmuptime", "5");	// round warmup time
 
 	// Score Settings
-	setcvar("scr_sd_clearscoreeachhalf", "0");	// Re-set Players Score at halftime? 1=Yes 0=No  Used to reset battlerank if it is on.
+	setcvar("scr_tdm_clearscoreeachhalf", "0");	// Re-set Players Score at halftime? 1=Yes 0=No  Used to reset battlerank if it is on.
 
 	// HUD & Scoreboard Options
 	setcvar("sv_scoreboard", "tiny");	// Use tiny Scoreboard (Other Settings: "big" & "small")
-	setcvar("sv_playersleft", "1");		// Turn OFF players left display
 
 	// Warm-up Mines
 	setcvar("sv_warmupmines", "1"); //Leave this on for now. Mines need to be re-worked.
@@ -93,19 +85,19 @@ Rules()
 	// *****************************************************
 	
 	// Vehicle Explosion Timer
-	setcvar("g_vehicleBurnTime" , "0"); // Time in seconds a vehicle burns before blowing up
+	setcvar("g_vehicleBurnTime" , "10"); // Time in seconds a vehicle burns before blowing up
 
 
 	// Jeeps
-	setcvar("scr_allow_jeeps" , "0");
-	setcvar("scr_allow_jeep_gunner" , "0");
+	setcvar("scr_allow_jeeps" , "1");
+	setcvar("scr_allow_jeep_gunner" , "1");
 
 	setcvar("scr_jeep_spawn_limit", "0"); // 0 is disabled. Each vehicle will only spawn this number of times
 	setcvar("scr_vehicle_limit_jeep", "0"); // Limits the number of jeeps available on the map at any given time (0 = disabled)
 
-	setcvar("scr_allow_horch" , "0");
-	setcvar("scr_allow_gaz67b" , "0"); 
-	setcvar("scr_allow_willyjeep" , "0");
+	setcvar("scr_allow_horch" , "1");
+	setcvar("scr_allow_gaz67b" , "1"); 
+	setcvar("scr_allow_willyjeep" , "1");
 
 	setcvar("scr_jeep_respawn_wait" , "5");
 	setCvar("scr_selfDestructJeepTime", "90");
@@ -118,11 +110,11 @@ Rules()
 	setcvar("scr_vehicle_limit_medium_tank", "50"); // Limits the number of medium tanks available on the map at any given time (0 = disabled)
 	setcvar("scr_vehicle_limit_heavy_tank", "50"); // Limits the number of heavy tanks available on the map at any given time (0 = disabled)
 
-	setcvar("scr_allow_su152" , "0");
-	setcvar("scr_allow_elefant" , "0");
-	setcvar("scr_allow_panzeriv" , "0");
-	setcvar("scr_allow_t34" , "0");
-	setcvar("scr_allow_sherman" , "0");
+	setcvar("scr_allow_su152" , "1");
+	setcvar("scr_allow_elefant" , "1");
+	setcvar("scr_allow_panzeriv" , "1");
+	setcvar("scr_allow_t34" , "1");
+	setcvar("scr_allow_sherman" , "1");
 
 	setcvar("scr_tank_respawn_wait" , "120");
 	setCvar("scr_selfDestructTankTime", "180");
@@ -143,6 +135,7 @@ Rules()
 	setcvar("scr_allow_kar98k" , "1");
 	setcvar("scr_allow_m1garand" , "1");
 	setcvar("scr_allow_nagant" , "1");
+	setcvar("scr_allow_us_nagant" , "1");
 	setcvar("scr_allow_gewehr43" , "1");
 
 
@@ -176,9 +169,9 @@ Rules()
 	setcvar("scr_allow_m1carbine" , "1");
 
 	// Rockets
-	setcvar("scr_allow_panzerfaust" , "0");
-	setcvar("scr_allow_panzerschreck", "0");
-	setcvar("scr_allow_bazooka" , "0");
+	setcvar("scr_allow_panzerfaust" , "1");
+	setcvar("scr_allow_panzerschreck", "1");
+	setcvar("scr_allow_bazooka" , "1");
 
 	// Deployable Machine Guns
 	setcvar("sv_noDropDMG", "0");	// 1=can't drop Deployable MG, 0=DMG Drops
@@ -210,13 +203,13 @@ Rules()
 	setcvar("scr_allow_flak88" , "0");
 
 	// MG42 (Stationary MG positions)
-	setCvar("scr_allow_mg42", "0");
+	setCvar("scr_allow_mg42", "1");
 
 
 	// *****************************************************
 	// ****************** Timeouts *************************
 	// *****************************************************
-	setcvar("g_timeoutsAllowed", "3"); //The number of timeouts allowed per side.
+	setcvar("g_timeoutsAllowed", "0"); //The number of timeouts allowed per side.
 	setcvar("g_timeoutLength", "60000"); //The length of each timeout.
 	setcvar("g_timeoutRecovery", "10000"); //The length of the preparation period which occurs after a time-in is called, or after a timeout expires.  This recovery period is used to alert all players that play is about to begin.
 	setcvar("g_timeoutBank", "180000"); //The total amount of time a team can spend in timeout.
@@ -226,7 +219,8 @@ Rules()
 	// *********** PAM UO Auto Demo/Screenshots ************
 	// *****************************************************
 	setcvar("g_autoscreenshot" , "1");
-	setcvar("g_autodemo" , "1");
+	setcvar("g_autodemo" , "0");
+
 	// *****************************************************
 	// *********** PAM UO Auto Console Lock ****************
 	// *****************************************************
@@ -248,10 +242,10 @@ Rules()
 	setcvar("sv_pure", "1");
 
 	// Team Icons 
-	setcvar("scr_drawfriend" , "1");
+	setcvar("scr_drawfriend" , "0");
 
 	// Friendly Fire 
-	setcvar("scr_friendlyfire" , "1");
+	setcvar("scr_friendlyfire" , "0");
 
 	// Kill Cam & Spectate
 	setcvar("scr_killcam" , "0");
@@ -260,17 +254,17 @@ Rules()
 	setcvar("g_deadChat" , "1");
 
 	// Auto Team Balance 
-	setcvar("scr_teambalance" , "0");
+	setcvar("scr_teambalance" , "1");
 
 	// Allow Voting 
 	setcvar("scr_allow_vote" , "1");
 	setcvar("g_allowvote" , "1");
 	setcvar("g_allowvotetempbanuser" , "0");
 	setcvar("g_allowvotetempbanclient" , "0");
-	setcvar("g_allowvotekick" , "1");
+	setcvar("g_allowvotekick" , "0");
 	setcvar("g_allowvoteclientkick" , "0");
-	setcvar("g_allowvotegametype" , "0");
-	setcvar("g_allowvotetypemap" , "0");
+	setcvar("g_allowvotegametype" , "1");
+	setcvar("g_allowvotetypemap" , "1");
 	setcvar("g_allowvotemap" , "1");
 	setcvar("g_allowvotemaprotate" , "0");
 	setcvar("g_allowvotemaprestart" , "1");
@@ -283,4 +277,10 @@ Rules()
 
 	/* Do NOT Touch These */
 	game["mode"] = "match";
+}
+
+SuddenDeathRules()
+{ //NOT USED IN TDM
+	level.flagtimeout = -1;	 //Changing Timing on Flag Timeout to Return to base on its own... -1 = Never
+	level.flagtimeout = -1;	// Determines whether a team can return a flag to its base by touching it. When this is on AND scr_ctf_flagresettime is set to -1 (NEVER), your flag does NOT need to be at your base to capture the enemies flag.
 }

@@ -99,6 +99,12 @@ PamMain()
 			case "twl":
 				maps\mp\gametypes\rules\_twl_tdm_rules::Rules();
 				break;
+			case "na_comp":
+				maps\mp\gametypes\rules\_na_comp_tdm_rules::Rules();
+				break;
+			case "na_comp_pub":
+				maps\mp\gametypes\rules\_na_comp_pub_tdm_rules::Rules();
+				break;
 			case "bl":
 				maps\mp\gametypes\rules\_britleague_tdm_rules::Rules();
 				break;
@@ -423,6 +429,7 @@ Callback_StartGameType()
 
 	maps\mp\gametypes\_pam_teams::modeltype();
 	maps\mp\gametypes\_pam_teams::precache();
+	maps\mp\gametypes\_playercard::precachePlayerCardElems();
 	maps\mp\gametypes\_pam_teams::scoreboard();
 	maps\mp\gametypes\_pam_teams::initGlobalCvars();
 	maps\mp\gametypes\_pam_teams::initWeaponCvars();
@@ -478,6 +485,11 @@ Callback_PlayerConnect()
 
 	// start the vsay thread
 	self thread maps\mp\gametypes\_pam_teams::vsay_monitor();
+
+	//CODUO NA COMP ADDITION
+	//Disable playercards if sv_playercards not set
+	if(getCvar("sv_playercards") != 1)
+		self setClientCvar("ui_playercard","0");
 
 	if(isDefined(self.pers["team"]) && self.pers["team"] != "spectator")
 	{
@@ -716,6 +728,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}		
 		else if(menu == game["menu_weapon_allies"] || menu == game["menu_weapon_axis"])
@@ -733,6 +750,12 @@ Callback_PlayerConnect()
 			else if(response == "callvote")
 			{
 				self openMenu(game["menu_callvote"]);
+				continue;
+			}
+			else if(response == "playercard")
+			{
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
 				continue;
 			}
 			
@@ -770,6 +793,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_callvote"])
@@ -790,6 +818,11 @@ Callback_PlayerConnect()
 			case "viewmap":
 				self openMenu(game["menu_viewmap"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_quickcommands"])
@@ -802,6 +835,8 @@ Callback_PlayerConnect()
 			maps\mp\gametypes\_pam_teams::quickvehicles(response);
 		else if(menu == game["menu_quickrequests"])
 			maps\mp\gametypes\_pam_teams::quickrequests(response);
+		else if(menu == game["menu_playercard"])
+			maps\mp\gametypes\_playercard::handleMenuResponse(response);
 	}
 }
 
@@ -1124,9 +1159,15 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		doKillcam = false;
 	
 	if(doKillcam)
+	{
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 1);
 		self thread killcam(attackerNum, delay);
+	}
 	else
+	{
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 2);
 		self thread respawn();
+	}
 }
 
 // ----------------------------------------------------------------------------------
@@ -1266,6 +1307,7 @@ spawnSpectator(origin, angles)
 	}
 	
 	self setClientCvar("cg_objectiveText", &"TDM_ALLIES_KILL_AXIS_PLAYERS");
+	self thread maps\mp\gametypes\_playercard::spectatePlayerCard();
 }
 
 spawnIntermission()

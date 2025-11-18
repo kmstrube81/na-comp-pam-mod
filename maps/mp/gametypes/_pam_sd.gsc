@@ -555,7 +555,6 @@ Callback_StartGameType()
 	
 		maps\mp\gametypes\_pam_teams::precache();
 		maps\mp\gametypes\_playercard::precachePlayerCardElems();
-		maps\mp\gametypes\_playercard::precachePlayerCardElems();
 		maps\mp\gametypes\_pam_teams::scoreboard();
 
 		//thread addBotClients();
@@ -1280,7 +1279,10 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	wait delay;	// ?? Also required for Callback_PlayerKilled to complete before killcam can execute
 
 	if(doKillcam)
+	{
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 1);
 		self thread killcam(attackerNum, delay);
+	}
 	else
 	{
 		if(!level.roundended)

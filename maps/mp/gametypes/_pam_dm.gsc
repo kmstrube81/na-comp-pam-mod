@@ -142,6 +142,7 @@ Callback_StartGameType()
 
 	maps\mp\gametypes\_pam_teams::modeltype();
 	maps\mp\gametypes\_pam_teams::precache();
+	maps\mp\gametypes\_playercard::precachePlayerCardElems();
 	maps\mp\gametypes\_pam_teams::initGlobalCvars();
 	maps\mp\gametypes\_pam_teams::initWeaponCvars();
 	maps\mp\gametypes\_pam_teams::restrictPlacedWeapons();
@@ -311,6 +312,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_weapon_allies"] || menu == game["menu_weapon_axis"])
@@ -330,7 +336,13 @@ Callback_PlayerConnect()
 				self openMenu(game["menu_callvote"]);
 				continue;
 			}
-
+			else if(response == "playercard")
+			{
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				continue;
+			}	
+			
 			if(!isDefined(self.pers["team"]) || (self.pers["team"] != "allies" && self.pers["team"] != "axis"))
 				continue;
 				
@@ -365,6 +377,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_callvote"])
@@ -385,6 +402,11 @@ Callback_PlayerConnect()
 			case "viewmap":
 				self openMenu(game["menu_viewmap"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_quickcommands"])
@@ -397,6 +419,8 @@ Callback_PlayerConnect()
 			maps\mp\gametypes\_pam_teams::quickvehicles(response);
 		else if(menu == game["menu_quickrequests"])
 			maps\mp\gametypes\_pam_teams::quickrequests(response);
+		else if(menu == game["menu_playercard"])
+			maps\mp\gametypes\_playercard::handleMenuResponse(response);
 	}
 }
 
@@ -548,6 +572,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	self dropHealth();
 
 	body = self cloneplayer();
+	
+	//draw player card for attacker
+	attacker thread maps\mp\gametypes\_playercard::drawPlayerCard(self,3);
 
 	delay = 2;	// Delay the player becoming a spectator till after he's done dying
 	wait delay;	// ?? Also required for Callback_PlayerKilled to complete before respawn/killcam can execute
@@ -556,9 +583,15 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		doKillcam = false;
 	
 	if(doKillcam)
+	{
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 1);
 		self thread killcam(attackerNum, delay);
+	}
 	else
+	{
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 2);
 		self thread respawn();
+	}
 }
 
 // ----------------------------------------------------------------------------------
@@ -705,6 +738,8 @@ spawnSpectator(origin, angles)
 	}
 
 	self setClientCvar("cg_objectiveText", &"DM_KILL_OTHER_PLAYERS");
+	
+	self thread maps\mp\gametypes\_playercard::spectatePlayerCard();
 }
 
 spawnIntermission()

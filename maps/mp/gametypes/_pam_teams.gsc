@@ -636,6 +636,13 @@ initWeaponCvars()
 	setCvar("scr_allow_nagant", level.allow_nagant);
 	setCvar("ui_allow_nagant", level.allow_nagant);
 	makeCvarServerInfo("ui_allow_nagant", "1");
+	
+	level.allow_us_nagant = getCvar("scr_allow_us_nagant");
+	if(level.allow_us_nagant == "")
+		level.allow_nagant = "0";
+	setCvar("scr_allow_us_nagant", level.allow_us_nagant);
+	setCvar("ui_allow_us_nagant", level.allow_us_nagant);
+	makeCvarServerInfo("ui_allow_us_nagant", "1");
 
 	level.allow_svt40 = getCvar("scr_allow_svt40");
 	if(level.allow_svt40 == "")
@@ -946,6 +953,13 @@ updateWeaponCvars()
 		{
 			level.allow_nagant = scr_allow_nagant;
 			setCvar("ui_allow_nagant", level.allow_nagant);
+		}
+
+		scr_allow_us_nagant = getCvar("scr_allow_us_nagant");
+		if(level.allow_us_nagant != scr_allow_us_nagant)
+		{
+			level.allow_us_nagant = scr_allow_us_nagant;
+			setCvar("ui_allow_us_nagant", level.allow_us_nagant);
 		}
 
 		scr_allow_svt40 = getCvar("scr_allow_svt40");
@@ -1663,6 +1677,15 @@ restrict(response)
 					response = "restricted";
 				}
 				break;
+				
+			case "mosin_nagant_mp":
+				if(!getcvar("scr_allow_us_nagant"))
+				{
+					self iprintln(&"MPSCRIPT_MOSINNAGANT_IS_A_RESTRICTED");
+					response = "restricted";
+				}
+				break;
+				
 			default:
 				self iprintln(&"MPSCRIPT_UNKNOWN_WEAPON_SELECTED");
 				response = "restricted";
@@ -1907,10 +1930,21 @@ restrict_anyteam(response)
 				break;
 
 			case "mosin_nagant_mp":
-				if(!getcvar("scr_allow_nagant"))
+				if(game["allies"] == "russian")
 				{
-					self iprintln(&"MPSCRIPT_MOSINNAGANT_IS_A_RESTRICTED");
-					response = "restricted";
+					if(!getcvar("scr_allow_nagant"))
+					{
+						self iprintln(&"MPSCRIPT_MOSINNAGANT_IS_A_RESTRICTED");
+						response = "restricted";
+					}
+				}
+				else if(game["allies"] == "american")
+				{
+					if(!getcvar("scr_allow_us_nagant"))
+					{
+						self iprintln(&"MPSCRIPT_MOSINNAGANT_IS_A_RESTRICTED");
+						response = "restricted";
+					}
 				}
 				break;
 

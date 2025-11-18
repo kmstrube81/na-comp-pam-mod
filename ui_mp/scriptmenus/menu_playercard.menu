@@ -2,11 +2,12 @@
 
 #define ORIGIN_MENUTABS				96 64
 #define ORIGIN_MENUWINDOW			96 96
+#define ORIGIN_PLAYERCARD			296 140
 
 {
 	menuDef
 	{
-		name			"team_germanonly"
+		name			"menu_playercard"
 		fullscreen		0
 		rect			0 0 640 480
 		focuscolor		1 1 1 1
@@ -15,7 +16,7 @@
 		onEsc 
 		{
 			scriptMenuResponse "close";
-			close team_germanonly;
+			close menu_playercard;
 		}
 		onOpen 
 		{
@@ -127,7 +128,7 @@
 			action
 			{
 				play "mouse_click";
-				close team_germanonly;
+				close menu_playercard;
 				open main;
 			}
 			onFocus
@@ -165,7 +166,7 @@
 			backcolor		1 1 1 .125
 			decoration
 		}
-
+// TEAM BUTTON
 		itemDef
 		{
 			name			"button_team"
@@ -182,13 +183,42 @@
 			textalignx		37
 			textaligny		24
 			textalign		ITEM_ALIGN_CENTER
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "team";
+				close menu_playercard;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		itemDef
+		{
+			name			"button_team_hline"
+			visible			1
+			rect			74 3 75 2
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_FILLED
+			backcolor		1 1 1 .125
 			decoration
 		}
 		itemDef
 		{
-			name			"button_team_gray"
+			name			"button_team_lvline"
 			visible			1
-			rect			74 3 75 29
+			rect			74 5 1 27
+			origin			ORIGIN_MENUTABS
+			style			WINDOW_STYLE_FILLED
+			backcolor		1 1 1 .125
+			decoration
+		}
+		itemDef
+		{
+			name			"button_team_rvline"
+			visible			1
+			rect			149 5 1 27
 			origin			ORIGIN_MENUTABS
 			style			WINDOW_STYLE_FILLED
 			backcolor		1 1 1 .125
@@ -217,7 +247,7 @@
 			{
 				play "mouse_click";
 				scriptMenuResponse "weapon";
-				close team_germanonly;
+				close menu_playercard;
 			}
 			onFocus
 			{
@@ -322,7 +352,6 @@
 			cvartest		"ui_weapontab"
 			hideCvar		{ "1" }
 		}
-
 		itemDef
 		{
 			name			"button_viewmap"
@@ -343,7 +372,7 @@
 			{
 				play "mouse_click";
 				scriptMenuResponse "viewmap";
-				close team_germanonly;
+				close menu_playercard;
 			}
 			onFocus
 			{
@@ -402,7 +431,7 @@
 			{
 				play "mouse_click";
 				scriptMenuResponse "callvote";
-				close team_germanonly;
+				close menu_playercard;
 			}
 			onFocus
 			{
@@ -506,7 +535,7 @@
 			{
 				play "mouse_click";
 				scriptMenuResponse "playercard";
-				close team_germanonly;
+				close menu_playercard;
 			}
 			onFocus
 			{
@@ -515,89 +544,25 @@
 		}
 		itemDef
 		{
-			name			"button_playercard_hline"
+			name			"button_team_gray"
 			visible			1
-			rect			374 3 71 2
+			rect			374 0 74 32
 			origin			ORIGIN_MENUTABS
 			style			WINDOW_STYLE_FILLED
 			backcolor		1 1 1 .125
 			decoration
-			cvartest		"ui_playercard"
-			hideCvar		{ "0" }
-		}
-		itemDef
-		{
-			name			"button_playercard_lvline"
-			visible			1
-			rect			374 5 1 27
-			origin			ORIGIN_MENUTABS
-			style			WINDOW_STYLE_FILLED
-			backcolor		1 1 1 .125
-			decoration
-			cvartest		"ui_playercard"
-			hideCvar		{ "0" }
-		}
-		itemDef
-		{
-			name			"button_playercard_rvline"
-			visible			1
-			rect			443 5 2 27
-			origin			ORIGIN_MENUTABS
-			style			WINDOW_STYLE_FILLED
-			backcolor		1 1 1 .125
-			decoration
-			cvartest		"ui_playercard"
-			hideCvar		{ "0" }
-		}
-
-// PLAYERCARD BUTTON HIDDEN
-		itemDef
-		{
-			name			"button_playercard_lvedge"
-			visible			1
-			rect			374 0 4 29
-			origin			ORIGIN_MENUTABS
-			style			WINDOW_STYLE_FILLED
-			backcolor		0 0 0 0.7975
-			decoration
-			cvartest		"ui_playercard"
-			showCvar		{ "0" }
-		}
-		itemDef
-		{
-			name			"button_playerecard_bhedge"
-			visible			1
-			rect			374 29 74 3
-			origin			ORIGIN_MENUTABS
-			style			WINDOW_STYLE_FILLED
-			backcolor		0 0 0 0.7975
-			decoration
-			cvartest		"ui_playercard"
-			showCvar		{ "0" }
-		}
-		itemDef
-		{
-			name			"button_playercard_lvline"
-			visible			1
-			rect			374 3 1 29
-			origin			ORIGIN_MENUTABS
-			style			WINDOW_STYLE_FILLED
-			backcolor		1 1 1 .125
-			decoration
-			cvartest		"ui_playercard"
-			showCvar		{ "0" }
 		}
 
 // MENU CHOICES
 		itemDef 
 		{
-			name			"button_german"
+			name			"button_prevCS"
 			visible			1
-			rect			16 46 160 23
+			rect			16 40 160 23
 			origin			ORIGIN_MENUWINDOW
 			forecolor		1 1 1 1
 			type			ITEM_TYPE_BUTTON
-			text			"@MPMENU_1_AUTOASSIGN"
+			text			"1. Previous Callsign"
 			textfont		UI_FONT_NORMAL
 			textscale		.24
 			textalignx		10
@@ -605,25 +570,24 @@
 			action
 			{
 				play "mouse_click";
-				scriptMenuResponse "axis";
-				close team_germanonly;
+				scriptMenuResponse "prevCS";
 			}
 			onFocus
 			{
 				play "mouse_over";
 			}
 		}
-		execKey "1" { play "mouse_click"; scriptMenuResponse "axis"; close team_germanonly }
+		execKey "1" { play "mouse_click"; scriptMenuResponse "prevCS"; }
 		
 		itemDef 
 		{
-			name			"button_spectate"
+			name			"button_nextCS"
 			visible			1
-			rect			16 70 160 23
+			rect			16 64 160 23
 			origin			ORIGIN_MENUWINDOW
 			forecolor		1 1 1 1
 			type			ITEM_TYPE_BUTTON
-			text			"@MPMENU_2_SPECTATE"
+			text			"2. Next Callsign"
 			textfont		UI_FONT_NORMAL
 			textscale		.24
 			textalignx		10
@@ -631,29 +595,240 @@
 			action
 			{
 				play "mouse_click";
-				scriptMenuResponse "spectator";
-				close team_germanonly;
+				scriptMenuResponse "nextCS";
 			}
 			onFocus
 			{
 				play "mouse_over";
 			}
 		}
-		execKey "2" { play "mouse_click"; scriptMenuResponse "spectator"; close team_germanonly }
-
-// MESSAGE OF THE DAY
-		itemDef
+		execKey "2" { play "mouse_click"; scriptMenuResponse "nextCS"; }
+		
+		itemDef 
 		{
-			name			"text_motd"
+			name			"button_prevEM"
 			visible			1
-			rect			208 24 216 216
+			rect			16 88 160 23
 			origin			ORIGIN_MENUWINDOW
 			forecolor		1 1 1 1
-			autowrapped
-			cvar			"scr_motd"
+			type			ITEM_TYPE_BUTTON
+			text			"3. Previous Emblem"
 			textfont		UI_FONT_NORMAL
 			textscale		.24
+			textalignx		10
 			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "prevEM";
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "3" { play "mouse_click"; scriptMenuResponse "prevEM"; }
+		
+		itemDef 
+		{
+			name			"button_nextEM"
+			visible			1
+			rect			16 112 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"4. Next Emblem"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "nextEM";
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "4" { play "mouse_click"; scriptMenuResponse "nextEM"; }
+		
+		itemDef 
+		{
+			name			"button_prevBS"
+			visible			1
+			rect			16 136 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"5. Previous Background"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "prevBG";
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "5" { play "mouse_click"; scriptMenuResponse "prevBG"; }
+		
+		itemDef 
+		{
+			name			"button_nextBG"
+			visible			1
+			rect			16 160 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"6. Next Background"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "nextBG";
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "6" { play "mouse_click"; scriptMenuResponse "nextBG"; }
+		
+		itemDef 
+		{
+			name			"button_save"
+			visible			1
+			rect			16 184 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"7. Save Playercard"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "save";
+				close menu_playercard;
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "7" { play "mouse_click"; scriptMenuResponse "save"; close menu_playercard }
+		
+		itemDef 
+		{
+			name			"button_cancel"
+			visible			1
+			rect			16 208 160 23
+			origin			ORIGIN_MENUWINDOW
+			forecolor		1 1 1 1
+			type			ITEM_TYPE_BUTTON
+			text			"8. Cancel"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		10
+			textaligny		20
+			action
+			{
+				play "mouse_click";
+				scriptMenuResponse "cancel";
+			}
+			onFocus
+			{
+				play "mouse_over";
+			}
+		}
+		execKey "8" { play "mouse_click"; scriptMenuResponse "cancel"; }
+		
+		itemDef
+		{
+			name			"playercard_background"
+			visible 		1
+			rect			0 0 192 48
+			origin			ORIGIN_PLAYERCARD
+			style			WINDOW_STYLE_CVAR_SHADER
+			cvar			"ui_playercard_bg"
+			decoration
+		}
+		itemDef
+		{
+			name			"playercard_emblem"
+			visible 		1
+			rect			144 0 48 48
+			origin			ORIGIN_PLAYERCARD
+			style			WINDOW_STYLE_CVAR_SHADER
+			cvar			"ui_playercard_em"
+			decoration
+		}
+		itemDef
+		{
+			name			"playercard_callsign"
+			visible 		1
+			rect			0 0 128 48
+			origin			ORIGIN_PLAYERCARD
+			autowrapped
+			cvar			"ui_playercard_cs"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		4
+			textaligny		16
+			decoration
+		}
+		itemDef
+		{
+			name			"playercard_kills"
+			visible 		1
+			rect			0 0 128 48
+			origin			ORIGIN_PLAYERCARD
+			autowrapped
+			cvar			"ui_playercard_ks"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		4
+			textaligny		44
+			decoration
+		}
+		itemDef
+		{
+			name			"playercard_deaths"
+			visible 		1
+			rect			0 0 128 48
+			origin			ORIGIN_PLAYERCARD
+			autowrapped
+			cvar			"ui_playercard_ds"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		44
+			textaligny		44
+			decoration
+		}
+		itemDef
+		{
+			name			"playercard_skill"
+			visible 		1
+			rect			0 0 128 48
+			origin			ORIGIN_PLAYERCARD
+			autowrapped
+			cvar			"ui_playercard_sk"
+			textfont		UI_FONT_NORMAL
+			textscale		.24
+			textalignx		88
+			textaligny		44
 			decoration
 		}
 	}

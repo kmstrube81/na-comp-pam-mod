@@ -143,6 +143,7 @@ Rules()
 	setcvar("scr_allow_kar98k" , "1");
 	setcvar("scr_allow_m1garand" , "1");
 	setcvar("scr_allow_nagant" , "1");
+	setcvar("scr_allow_us_nagant" , "1");
 	setcvar("scr_allow_gewehr43" , "1");
 
 
@@ -226,6 +227,7 @@ Rules()
 	// *********** PAM UO Auto Demo/Screenshots ************
 	// *****************************************************
 	setcvar("g_autoscreenshot" , "1");
+	setcvar("g_autodemo" , "0");
 
 	// *****************************************************
 	// *********** PAM UO Auto Console Lock ****************
@@ -239,19 +241,19 @@ Rules()
 	// ************************************************
 
 	// HTTP Setup 
-	setcvar("sv_wwwDownload" , "0");
-	setcvar("sv_wwwBaseURL" , ""); 
-	setcvar("sv_wwwDlDisconnected", "0");
-	setcvar("sv_allowdownload", "0");
+	//setcvar("sv_wwwDownload" , "0");
+	//setcvar("sv_wwwBaseURL" , ""); 
+	//setcvar("sv_wwwDlDisconnected", "0");
+	//setcvar("sv_allowdownload", "0");
 
 	//SV Pure
 	setcvar("sv_pure", "1");
 
 	// Team Icons 
-	setcvar("scr_drawfriend" , "1");
+	setcvar("scr_drawfriend" , "0");
 
 	// Friendly Fire 
-	setcvar("scr_friendlyfire" , "1");
+	setcvar("scr_friendlyfire" , "0");
 
 	// Kill Cam & Spectate
 	setcvar("scr_killcam" , "0");
@@ -260,14 +262,14 @@ Rules()
 	setcvar("g_deadChat" , "1");
 
 	// Auto Team Balance 
-	setcvar("scr_teambalance" , "0");
+	setcvar("scr_teambalance" , "1");
 
 	// Allow Voting 
 	setcvar("scr_allow_vote" , "1");
 	setcvar("g_allowvote" , "1");
 	setcvar("g_allowvotetempbanuser" , "0");
 	setcvar("g_allowvotetempbanclient" , "0");
-	setcvar("g_allowvotekick" , "1");
+	setcvar("g_allowvotekick" , "0");
 	setcvar("g_allowvoteclientkick" , "0");
 	setcvar("g_allowvotegametype" , "1");
 	setcvar("g_allowvotetypemap" , "1");

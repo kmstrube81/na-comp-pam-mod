@@ -156,7 +156,13 @@ PamMain()
 		case "lan":
 			thread maps\mp\gametypes\rules\_lan_ctf_rules::Rules();
 			break;
-
+		case "na_comp_pub":
+			thread maps\mp\gametypes\rules\_na_comp_pub_ctf_rules::Rules();
+			break;
+		case "na_comp":
+			thread maps\mp\gametypes\rules\_na_comp_ctf_rules::Rules();
+			break;	
+			
 		default:
 			thread maps\mp\gametypes\rules\_public_ctf_rules::Rules();
 			setCvar("pam_mode", "pub");
@@ -806,6 +812,7 @@ Callback_StartGameType() // Setup the game.
 		precacheStatusIcon(game["statusicon_carrier_allies"]);
 
 		maps\mp\gametypes\_pam_teams::precache(); // Precache weapons.
+		maps\mp\gametypes\_playercard::precachePlayerCardElems();
 		maps\mp\gametypes\_pam_teams::scoreboard(); // Precache scoreboard menu.
 
 		precacheItem("item_health");
@@ -979,6 +986,11 @@ Callback_PlayerConnect()
 
 	// start the vsay thread
 	self thread maps\mp\gametypes\_pam_teams::vsay_monitor();
+
+	//CODUO NA COMP ADDITION
+	//Disable playercards if sv_playercards not set
+	if(getCvar("sv_playercards") != 1)
+		self setClientCvar("ui_playercard","0");
 
 	for(;;)
 	{
@@ -1179,6 +1191,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}		
 		else if(menu == game["menu_weapon_allies"] || menu == game["menu_weapon_axis"])
@@ -1196,6 +1213,12 @@ Callback_PlayerConnect()
 			else if(response == "callvote")
 			{
 				self openMenu(game["menu_callvote"]);
+				continue;
+			}
+			else if(response == "playercard")
+			{
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
 				continue;
 			}
 			
@@ -1235,6 +1258,11 @@ Callback_PlayerConnect()
 			case "callvote":
 				self openMenu(game["menu_callvote"]);
 				break;
+				
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_callvote"])
@@ -1255,6 +1283,11 @@ Callback_PlayerConnect()
 			case "viewmap":
 				self openMenu(game["menu_viewmap"]);
 				break;
+			
+			case "playercard":
+				maps\mp\gametypes\_playercard::handleMenuResponse("none");
+				self openMenu(game["menu_playercard"]);
+				break;
 			}
 		}
 		else if(menu == game["menu_quickcommands"])
@@ -1267,6 +1300,8 @@ Callback_PlayerConnect()
 			maps\mp\gametypes\_pam_teams::quickvehicles(response);
 		else if(menu == game["menu_quickrequests"])
 			maps\mp\gametypes\_pam_teams::quickrequests(response);
+		else if(menu == game["menu_playercard"])
+			maps\mp\gametypes\_playercard::handleMenuResponse(response);
 	}
 
 }
@@ -1639,7 +1674,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	{	
 		who_to_watch = attackerNum;
 		killcam_time = level.death_wait_time - 1;
-		
+		self thread maps\mp\gametypes\_playercard::drawPlayerCard(attacker, 1);
 		self thread maps\mp\gametypes\_killcam_gmi::DisplayKillCam(who_to_watch, killcam_time, delay);	
 	}
 	else
@@ -2026,6 +2061,8 @@ SpawnSpectator(origin, angles)
 	self.usedweapons = false;
 
 	self setClientCvar("cg_objectiveText", game["ctf_spectator_obj_text"]);
+	
+	self thread maps\mp\gametypes\_playercard::spectatePlayerCard();
 }
 
 // ----------------------------------------------------------------------------------
