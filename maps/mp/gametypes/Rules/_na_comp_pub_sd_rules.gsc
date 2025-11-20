@@ -7,6 +7,8 @@ Rules()
 	setcvar("scr_final_killcam", "1"); // Final Killcam enabled
 	
 	setcvar("sv_playercards", "1"); // Enable playercards
+	
+	setcvar("pam_afterroundreport", 1); //Enable post round damage reports
 
 	/* Match Setup Options */
 	setcvar("scr_sd_half_round" , "10");	// Switch AFTER this round.

@@ -269,6 +269,10 @@ PamMain() // Starts when map is loaded.
 	level.basehealth = getCvarInt("scr_bas_basehealth");
 	level.basedamagedhealth = getCvarInt("scr_bas_damagedhealth");
 
+	//CODUO NA COMP ADDITION - AUTO READY
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
+
 	//Ready-Up
 	level.R_U_Name = [];
 	level.R_U_State = [];

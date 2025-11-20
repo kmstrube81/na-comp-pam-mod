@@ -33,6 +33,7 @@ Check_PAM_Modes(pammode)
 		case "mgl":
 		case "bl_classic":
 		case "na_comp":
+		case "na_comp_pub":
 		case "kw":
 		case "pub":
 		case "lan":

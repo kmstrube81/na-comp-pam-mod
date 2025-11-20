@@ -154,6 +154,10 @@ PamMain()
 	level.checkteambalance = false;
 	level.spawnframe = 0;
 
+	//CODUO NA COMP ADDITION - AUTO READY
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
+
 	//Ready-Up
 	level.R_U_Name = [];
 	level.R_U_State = [];

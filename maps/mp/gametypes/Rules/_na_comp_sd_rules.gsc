@@ -8,6 +8,8 @@ Rules()
 	
 	setcvar("sv_playercards", "0"); // Enable playercards
 	
+	setcvar("pam_afterroundreport", 0); //Enable post round damage reports
+	
 	/* Match Setup Options */
 	setcvar("scr_sd_half_round" , "10");	// Switch AFTER this round.
 

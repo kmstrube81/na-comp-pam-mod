@@ -244,6 +244,9 @@ PamMain()
 	//CODUO NA COMP ADDITION - AUTO READY
 	level.autoreadytime = getcvarint("pam_autoreadytime");
 	level.autoreadycount = getcvarint("pam_autoreadycount");
+	//CODUO NA COMP ADDITION - AFTER ROUND REPORT
+	level.afterroundreport = getCvarInt("pam_afterroundreport");
+	
 	level.halfround = getcvarint("scr_sd_half_round");
 	level.halfscore = getcvarint("scr_sd_half_score");
 	level.matchround = getcvarint("scr_sd_end_round");
@@ -2244,8 +2247,10 @@ endRound(roundwinner, doKillcam)
 		logPrint("RL;allies" + losers + "\n");
 	}
 
+	//CODUO NA COMP ADDITION
 	// Print damage stats
-	maps\mp\gametypes\_pam_round_report::printToAll();
+	if(level.afterroundreport)
+		maps\mp\gametypes\_pam_round_report::printToAll();
 
 	if(game["matchstarted"])
 	{

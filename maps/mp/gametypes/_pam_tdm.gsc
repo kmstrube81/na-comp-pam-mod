@@ -155,6 +155,10 @@ PamMain()
 
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
+	//CODUO NA COMP ADDITION - AUTO READY
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
+	
 	level.half_time = getcvarint("scr_tdm_half_time");
 	level.halfscore = getcvarint("scr_tdm_half_score");
 	level.matchscore1 = getcvarint("scr_tdm_end_score");

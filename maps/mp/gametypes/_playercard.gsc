@@ -21,6 +21,31 @@ getCallsigns()
 	array[17] = &"PC_CALLSIGN17";
 	array[18] = &"PC_CALLSIGN18";
 	array[19] = &"PC_CALLSIGN19";
+	array[20] = &"PC_CALLSIGN20";
+	array[21] = &"PC_CALLSIGN21";
+	array[22] = &"PC_CALLSIGN22";
+	array[23] = &"PC_CALLSIGN23";
+	array[24] = &"PC_CALLSIGN24";
+	array[25] = &"PC_CALLSIGN25";
+	array[26] = &"PC_CALLSIGN26";
+	array[27] = &"PC_CALLSIGN27";
+	array[28] = &"PC_CALLSIGN28";
+	array[29] = &"PC_CALLSIGN29";
+	array[30] = &"PC_CALLSIGN30";
+	array[31] = &"PC_CALLSIGN31";
+	array[32] = &"PC_CALLSIGN32";
+	array[33] = &"PC_CALLSIGN33";
+	array[34] = &"PC_CALLSIGN34";
+	array[35] = &"PC_CALLSIGN35";
+	array[36] = &"PC_CALLSIGN36";
+	array[37] = &"PC_CALLSIGN37";
+	array[38] = &"PC_CALLSIGN38";
+	array[39] = &"PC_CALLSIGN39";
+	array[40] = &"PC_CALLSIGN40";
+	array[41] = &"PC_CALLSIGN41";
+	array[42] = &"PC_CALLSIGN42";
+	array[43] = &"PC_CALLSIGN43";
+	array[44] = &"PC_CALLSIGN44";
 	
 	for(i = 0; i < array.size; i++)
 	{
@@ -53,6 +78,32 @@ getMenuCallsigns()
 	array[17] = "@PC_CALLSIGN17";
 	array[18] = "@PC_CALLSIGN18";
 	array[19] = "@PC_CALLSIGN19";
+	array[19] = "@PC_CALLSIGN19";
+	array[20] = "@PC_CALLSIGN20";
+	array[21] = "@PC_CALLSIGN21";
+	array[22] = "@PC_CALLSIGN22";
+	array[23] = "@PC_CALLSIGN23";
+	array[24] = "@PC_CALLSIGN24";
+	array[25] = "@PC_CALLSIGN25";
+	array[26] = "@PC_CALLSIGN26";
+	array[27] = "@PC_CALLSIGN27";
+	array[28] = "@PC_CALLSIGN28";
+	array[29] = "@PC_CALLSIGN29";
+	array[30] = "@PC_CALLSIGN30";
+	array[31] = "@PC_CALLSIGN31";
+	array[32] = "@PC_CALLSIGN32";
+	array[33] = "@PC_CALLSIGN33";
+	array[34] = "@PC_CALLSIGN34";
+	array[35] = "@PC_CALLSIGN35";
+	array[36] = "@PC_CALLSIGN36";
+	array[37] = "@PC_CALLSIGN37";
+	array[38] = "@PC_CALLSIGN38";
+	array[39] = "@PC_CALLSIGN39";
+	array[40] = "@PC_CALLSIGN40";
+	array[41] = "@PC_CALLSIGN41";
+	array[42] = "@PC_CALLSIGN42";
+	array[43] = "@PC_CALLSIGN43";
+	array[44] = "@PC_CALLSIGN44";
 	
 	return array;
 }
@@ -61,11 +112,37 @@ getBackgrounds()
 {
 
 	array = [];
-	array[0] = "gfx/backgrounds/hud@uo_mp.dds";
-	array[1] = "gfx/backgrounds/hud@vcod-american.dds";
-	array[2] = "gfx/backgrounds/hud@vcod-british.dds";
-	array[3] = "gfx/backgrounds/hud@vcod-russian.dds";
-	array[4] = "gfx/backgrounds/hud@usa-flag.dds";
+	
+	array[array.size] = "gfx/backgrounds/hud@aa-uo_mp.dds";
+	array[array.size] = "gfx/backgrounds/hud@aa-vcod-american.dds";
+	array[array.size] = "gfx/backgrounds/hud@aa-vcod-british.dds";
+	array[array.size] = "gfx/backgrounds/hud@aa-vcod-russian.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-usa-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@deadshit.dds";
+	array[array.size] = "gfx/backgrounds/hud@punches.dds";
+	array[array.size] = "gfx/backgrounds/hud@spider.dds";
+	array[array.size] = "gfx/backgrounds/hud@butterfly.dds";
+	array[array.size] = "gfx/backgrounds/hud@bullet.dds";
+	array[array.size] = "gfx/backgrounds/hud@fourthofjuly.dds";
+	array[array.size] = "gfx/backgrounds/hud@shark.dds";
+	array[array.size] = "gfx/backgrounds/hud@blackcat.dds";
+	array[array.size] = "gfx/backgrounds/hud@bloodsplat.dds";
+	array[array.size] = "gfx/backgrounds/hud@benjamins.dds";
+	array[array.size] = "gfx/backgrounds/hud@dice.dds";
+	array[array.size] = "gfx/backgrounds/hud@way2fast.dds";
+	array[array.size] = "gfx/backgrounds/hud@makeitrain.dds";
+	array[array.size] = "gfx/backgrounds/hud@weed.dds";
+	array[array.size] = "gfx/backgrounds/hud@tiger.dds";
+	array[array.size] = "gfx/backgrounds/hud@potogold.dds";
+	array[array.size] = "gfx/backgrounds/hud@spy.dds";
+	array[array.size] = "gfx/backgrounds/hud@paddle.dds";
+	array[array.size] = "gfx/backgrounds/hud@smokeem.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-canada-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-elsalvador-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-german-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-mexico-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-poland-flag.dds";
+	array[array.size] = "gfx/backgrounds/hud@aaz-uk-flag.dds";
 	
 	// bubble sort using manual string comparison
 	for(i = 0; i < array.size; i++)
@@ -92,55 +169,56 @@ getBackgrounds()
 getEmblems()
 {
 	array = [];
-	array[0] = "gfx/emblems/hud@bazooka_mp.dds";
-	array[1] = "gfx/emblems/hud@binoculars_mp.dds";
-	array[2] = "gfx/emblems/hud@bren_mp.dds";
-	array[3] = "gfx/emblems/hud@brutalamish.dds";
-	array[4] = "gfx/emblems/hud@camper.dds";
-	array[5] = "gfx/emblems/hud@colt_mp.dds";
-	array[6] = "gfx/emblems/hud@emoji57.dds";
-	array[7] = "gfx/emblems/hud@empire.dds";
-	array[8] = "gfx/emblems/hud@enfield_mp.dds";
-	array[9] = "gfx/emblems/hud@fg42_mp.dds";
-	array[10] = "gfx/emblems/hud@flamethrower_mp.dds";
-	array[11] = "gfx/emblems/hud@fraggrenade_mp.dds";
-	array[12] = "gfx/emblems/hud@gay69.dds";
-	array[13] = "gfx/emblems/hud@gewehr_mp.dds";
-	array[14] = "gfx/emblems/hud@greenthumb.dds";
-	array[15] = "gfx/emblems/hud@jumpman.dds";
-	array[16] = "gfx/emblems/hud@kar98k_mp.dds";
-	array[17] = "gfx/emblems/hud@kar98k_sniper_mp.dds";
-	array[18] = "gfx/emblems/hud@luger_mp.dds";
-	array[19] = "gfx/emblems/hud@m1carbine_mp.dds";
-	array[20] = "gfx/emblems/hud@m1garand_mp.dds";
-	array[21] = "gfx/emblems/hud@mg34_mp.dds";
-	array[22] = "gfx/emblems/hud@mg42_mp.dds";
-	array[23] = "gfx/emblems/hud@mk1britishfrag_mp.dds";
-	array[24] = "gfx/emblems/hud@mod_melee.dds";
-	array[25] = "gfx/emblems/hud@mosin_nagant_mp.dds";
-	array[26] = "gfx/emblems/hud@mosin_nagant_sniper_mp.dds";
-	array[27] = "gfx/emblems/hud@mp40_mp.dds";
-	array[28] = "gfx/emblems/hud@mp44_mp.dds";
-	array[29] = "gfx/emblems/hud@ninja.dds";
-	array[30] = "gfx/emblems/hud@none.dds";
-	array[31] = "gfx/emblems/hud@panzerfaust_mp.dds";
-	array[32] = "gfx/emblems/hud@panzerschreck_mp.dds";
-	array[33] = "gfx/emblems/hud@ppsh_mp.dds";
-	array[34] = "gfx/emblems/hud@ra.dds";
-	array[35] = "gfx/emblems/hud@ratcumfarmer.dds";
-	array[36] = "gfx/emblems/hud@rgd-33russianfrag_mp.dds";
-	array[37] = "gfx/emblems/hud@satchelcharge_mp.dds";
-	array[38] = "gfx/emblems/hud@silenced_sten_mp.dds";
-	array[39] = "gfx/emblems/hud@springfield_mp.dds";
-	array[40] = "gfx/emblems/hud@steilhandgrenate_mp.dds";
-	array[41] = "gfx/emblems/hud@sten_mp.dds";
-	array[42] = "gfx/emblems/hud@svt40_mp.dds";
-	array[43] = "gfx/emblems/hud@targetmaster.dds";
-	array[44] = "gfx/emblems/hud@thompson_mp.dds";
-	array[45] = "gfx/emblems/hud@touchgrass.dds";
-	array[46] = "gfx/emblems/hud@tt33_mp.dds";
-	array[47] = "gfx/emblems/hud@webley_mp.dds";
-	array[48] = "gfx/emblems/hud@sipsOJ.dds";
+	array[array.size] = "gfx/emblems/hud@bar_mp.dds";
+	array[array.size] = "gfx/emblems/hud@bazooka_mp.dds";
+	array[array.size] = "gfx/emblems/hud@binoculars_mp.dds";
+	array[array.size] = "gfx/emblems/hud@bren_mp.dds";
+	array[array.size] = "gfx/emblems/hud@brutalamish.dds";
+	array[array.size] = "gfx/emblems/hud@camper.dds";
+	array[array.size] = "gfx/emblems/hud@colt_mp.dds";
+	array[array.size] = "gfx/emblems/hud@emoji57.dds";
+	array[array.size] = "gfx/emblems/hud@empire.dds";
+	array[array.size] = "gfx/emblems/hud@enfield_mp.dds";
+	array[array.size] = "gfx/emblems/hud@fg42_mp.dds";
+	array[array.size] = "gfx/emblems/hud@flamethrower_mp.dds";
+	array[array.size] = "gfx/emblems/hud@fraggrenade_mp.dds";
+	array[array.size] = "gfx/emblems/hud@gay69.dds";
+	array[array.size] = "gfx/emblems/hud@gewehr_mp.dds";
+	array[array.size] = "gfx/emblems/hud@greenthumb.dds";
+	array[array.size] = "gfx/emblems/hud@jumpman.dds";
+	array[array.size] = "gfx/emblems/hud@kar98k_mp.dds";
+	array[array.size] = "gfx/emblems/hud@kar98k_sniper_mp.dds";
+	array[array.size] = "gfx/emblems/hud@luger_mp.dds";
+	array[array.size] = "gfx/emblems/hud@m1carbine_mp.dds";
+	array[array.size] = "gfx/emblems/hud@m1garand_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mg34_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mg42_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mk1britishfrag_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mod_melee.dds";
+	array[array.size] = "gfx/emblems/hud@mosin_nagant_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mosin_nagant_sniper_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mp40_mp.dds";
+	array[array.size] = "gfx/emblems/hud@mp44_mp.dds";
+	array[array.size] = "gfx/emblems/hud@ninja.dds";
+	array[array.size] = "gfx/emblems/hud@none.dds";
+	array[array.size] = "gfx/emblems/hud@panzerfaust_mp.dds";
+	array[array.size] = "gfx/emblems/hud@panzerschreck_mp.dds";
+	array[array.size] = "gfx/emblems/hud@ppsh_mp.dds";
+	array[array.size] = "gfx/emblems/hud@ra.dds";
+	array[array.size] = "gfx/emblems/hud@ratcumfarmer.dds";
+	array[array.size] = "gfx/emblems/hud@rgd-33russianfrag_mp.dds";
+	array[array.size] = "gfx/emblems/hud@satchelcharge_mp.dds";
+	array[array.size] = "gfx/emblems/hud@silenced_sten_mp.dds";
+	array[array.size] = "gfx/emblems/hud@springfield_mp.dds";
+	array[array.size] = "gfx/emblems/hud@steilhandgrenate_mp.dds";
+	array[array.size] = "gfx/emblems/hud@sten_mp.dds";
+	array[array.size] = "gfx/emblems/hud@svt40_mp.dds";
+	array[array.size] = "gfx/emblems/hud@targetmaster.dds";
+	array[array.size] = "gfx/emblems/hud@thompson_mp.dds";
+	array[array.size] = "gfx/emblems/hud@touchgrass.dds";
+	array[array.size] = "gfx/emblems/hud@tt33_mp.dds";
+	array[array.size] = "gfx/emblems/hud@webley_mp.dds";
+	array[array.size] = "gfx/emblems/hud@sipsOJ.dds";
 	
 	// bubble sort using manual string comparison
 	for(i = 0; i < array.size; i++)
@@ -447,10 +525,6 @@ destroyPlayerCard(pos)
 
 spectatePlayerCard()
 {
-
-	if(getCvar("sv_playercards") != 1)
-		return;
-	
 	self endon("spawned");
 	
 	oldspec = -1;

@@ -213,6 +213,10 @@ PamMain()
 
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
+	//CODUO NA COMP ADDITION - AUTO READY
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
+	
 	level.pamenable = getcvarint("svr_pamenable");
 	level.halfround = getcvarint("scr_ctf_half_round");
 	level.endround = getcvarint("scr_ctf_end_round");
