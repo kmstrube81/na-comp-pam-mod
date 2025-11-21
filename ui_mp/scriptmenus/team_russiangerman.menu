@@ -698,7 +698,7 @@
 		{
 			name			"text_motd"
 			visible			1
-			rect			208 24 216 216
+			rect			208 46 216 216
 			origin			ORIGIN_MENUWINDOW
 			forecolor		1 1 1 1
 			autowrapped

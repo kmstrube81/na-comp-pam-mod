@@ -610,7 +610,7 @@ isPlayerDead(id)
 		{
 			if(self.pers["team"] == "spectator" && player.sessionstate == "playing")
 				return true;
-			if( player.sessionstate == "playing") && self.pers["team"] != "spectator" && player.pers["team"] == self.pers["team"] )
+			if( player.sessionstate == "playing" && self.pers["team"] != "spectator" && player.pers["team"] == self.pers["team"] )
 				return true;
 			if( level.allowenemyspectate && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
 				return true;
