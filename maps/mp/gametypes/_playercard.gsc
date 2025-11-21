@@ -526,9 +526,12 @@ destroyPlayerCard(pos)
 spectatePlayerCard()
 {
 	self endon("spawned");
+	self endon("corrupt_killcam");
 	
 	oldspec = -1;
 	oldorigin = (0,0,0);
+	self.spectatedclient = self getSpectatorClient("next");
+	self drawPlayerCard(self.spectatedclient, 0);
 	while(true)
 	{
 		if(!isDefined(self.spectatedclient))
@@ -542,7 +545,7 @@ spectatePlayerCard()
 		
 		oldorigin = self.origin;
 		
-		if(self attackButtonPressed())
+		if(self attackButtonPressed() || isPlayerDead(self.spectatedclient))
 		{
 			while(self attackButtonPressed())
 				wait 0.05;
@@ -592,6 +595,33 @@ getPlayerName(id)
 			return player.name;
 	}
 	return "nobody";
+}
+
+isPlayerDead(id)
+{
+
+	players = getentarray("player", "classname");
+	for(i = 0; i < players.size; i++)
+	{
+		player = players[i];
+		if(player == self)
+			continue;
+		if(id == -1)
+		{
+			if(self.pers["team"] == "spectator" && player.sessionstate == "playing")
+				return true;
+			if( player.sessionstate == "playing") && self.pers["team"] != "spectator" && player.pers["team"] == self.pers["team"] )
+				return true;
+			if( level.allowenemyspectate && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
+				return true;
+		}
+		if(id == player getEntityNumber())
+		{
+			if (player.sessionstate == "dead" || (isDefined(player.pers["team"]) && player.pers["team"] == "spectator") || ( !level.allowenemyspectate && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" ))
+				return true;
+		}
+	}
+	return false;
 }
 
 getSpectatorClient(dir)

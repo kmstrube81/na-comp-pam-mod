@@ -95,11 +95,11 @@ Rules()
 	setcvar("g_roundwarmuptime", "5");	// round warmup time
 
 	// Score Settings
-	setcvar("scr_ctf_clearscoreeachhalf", "1");	// Re-set Players Score / Battlerank at halftime? 1=Yes 0=No
+	setcvar("scr_ctf_clearscoreeachhalf", "0);	// Re-set Players Score / Battlerank at halftime? 1=Yes 0=No
 
 	// HUD & Scoreboard Options
 	setcvar("sv_scoreboard", "tiny");	// Use tiny Scoreboard (Other Settings: "big" & "small")
-	setcvar("scr_ctf_showscores" , "0"); //Shows a continuous tiny scoreboard at the bottom of the screen
+	setcvar("scr_ctf_showscores" , "1"); //Shows a continuous tiny scoreboard at the bottom of the screen
 
 	// Flag Return Options
 	setcvar("scr_ctf_flagresettime", "20");	//How long (seconds) the flag sits after being dropped before it returns automatically. 20 is Stock. -1 is Never
@@ -107,7 +107,7 @@ Rules()
 
 	// Warm-up Mines
 	setcvar("sv_warmupmines", "1"); //Leave this on for now. Mines need to be re-worked.
-
+	setcvar("sv_warmupdamage", "1");
 
 	// *****************************************************
 	// ************ Vehicle Settings ***********************
@@ -232,7 +232,7 @@ Rules()
 	setcvar("scr_allow_flak88" , "0");
 
 	// MG42 (Stationary MG positions)
-	setCvar("scr_allow_mg42", "1");
+	setCvar("scr_allow_mg42", "0");
 
 
 	// *****************************************************

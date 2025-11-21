@@ -216,6 +216,8 @@ PamMain()
 	//CODUO NA COMP ADDITION - AUTO READY
 	level.autoreadytime = getcvarint("pam_autoreadytime");
 	level.autoreadycount = getcvarint("pam_autoreadycount");
+	//CODUO NA COMP ADDITION - WARMUP DAMAGE
+	level.warmupdamage = getcvarint("sv_warmupdamage");
 	
 	level.pamenable = getcvarint("svr_pamenable");
 	level.halfround = getcvarint("scr_ctf_half_round");
@@ -1351,7 +1353,7 @@ Callback_PlayerDisconnect()
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
 	// If in warmup, do NO damage
-	if (level.warmup == 1)
+	if (level.warmup == 1 && level.warmupdamage == 0)
 		return;
 
 	if(self.sessionteam == "spectator")
@@ -1476,7 +1478,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc)
 {
 	// If in warmup, do NO killing
-	if (level.warmup == 1)
+	if (level.warmup == 1 && level.warmupdamage == 0)
 		return;
 
 	self endon("spawned");

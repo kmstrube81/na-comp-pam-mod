@@ -88,7 +88,7 @@ Rules()
 
 	// Warm-up Mines
 	setcvar("sv_warmupmines", "1"); //Leave this on for now. Mines need to be re-worked.
-
+	setcvar("sv_warmupdamage", "1");
 
 	// *****************************************************
 	// ************ Vehicle Settings ***********************

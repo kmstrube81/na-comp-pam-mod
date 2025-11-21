@@ -3,7 +3,7 @@
 // Curent Revision placed here
 Get_Current_PAM_Ver()
 {
-	game["pamstring"] = &"P.A.M. UO V3.1";
+	game["pamstring"] = &"CODUO NA COMP P.A.M. UO V3.1";
 }
 
 //The below lines should be updated each new release:
@@ -57,6 +57,8 @@ Check_PAM_Modes(pammode)
 			case "twl_rifles":
 			case "twl_classic_ladder":
 			case "twl_classic_league":
+			case "na_comp":
+			case "na_comp_pub":
 			case "bl":
 			case "ga":
 			case "ccodl":
@@ -72,6 +74,8 @@ Check_PAM_Modes(pammode)
 		switch (pammode)
 		{
 			case "twl":
+			case "na_comp":
+			case "na_comp_pub":
 			case "bl":
 			case "pub":
 			case "lan":
@@ -88,6 +92,8 @@ Check_PAM_Modes(pammode)
 		{
 			case "twl":
 			case "pub":
+			case "na_comp":
+			case "na_comp_pub":
 			case "lan":
 				return 1;
 
@@ -101,6 +107,8 @@ Check_PAM_Modes(pammode)
 		{
 			case "twl":
 			case "pub":
+			case "na_comp":
+			case "na_comp_pub":
 			case "lan":
 				return 1;
 
@@ -114,6 +122,8 @@ Check_PAM_Modes(pammode)
 		{
 			case "twl":
 			case "pub":
+			case "na_comp":
+			case "na_comp_pub":
 			case "lan":
 				return 1;
 

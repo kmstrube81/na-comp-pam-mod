@@ -182,7 +182,7 @@ onPlayerKilled(eInflictor, eAttacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHi
 
 printToAll()
 {
-	if (!level.rpam_sd_round_report)
+	if (!level.afterroundreport)
 		return;
 
 	players = getentarray("player", "classname");

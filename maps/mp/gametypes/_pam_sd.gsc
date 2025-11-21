@@ -246,6 +246,9 @@ PamMain()
 	level.autoreadycount = getcvarint("pam_autoreadycount");
 	//CODUO NA COMP ADDITION - AFTER ROUND REPORT
 	level.afterroundreport = getCvarInt("pam_afterroundreport");
+	//CODUO NA COMP ADDITION - WARM UP DAMAGE
+	level.warmupdamage = getCvarInt("sv_warmupdamage");
+	
 	
 	level.halfround = getcvarint("scr_sd_half_round");
 	level.halfscore = getcvarint("scr_sd_half_score");
@@ -793,7 +796,13 @@ Callback_PlayerConnect()
 				//------------------------------------------------------------------------------
 				
 				if(response != self.pers["team"] && self.sessionstate == "playing")
+				{
+					if(self.pers["team"] == "allies")
+						level.alliesLastKilled = false;
+					else if(self.pers["team"] == "axis")
+						level.axisLastKilled = false;
 					self suicide();
+				} 
 	                        
 				self.pers["team"] = response;
 				self.pers["teamTime"] = (gettime() / 1000);
@@ -837,7 +846,14 @@ Callback_PlayerConnect()
 				if(self.pers["team"] != "spectator")
 				{
 					if(isAlive(self))
+					{
+						if(self.pers["team"] == "allies")
+							level.alliesLastKilled = false;
+						else if(self.pers["team"] == "axis")
+							level.axisLastKilled = false;
+							
 						self suicide();
+					}
 
 					self.pers["team"] = "spectator";
 					self.pers["teamTime"] = 1000000;
@@ -1003,7 +1019,7 @@ Callback_PlayerDisconnect()
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
-	if(level.warmup != 0)
+	if(level.warmup != 0 && level.warmupdamage == 0)
 		return;
 
 	if(self.sessionteam == "spectator")
@@ -1126,7 +1142,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 {
 	self endon("spawned");
 
-	if(level.warmup != 0)
+	if(level.warmup != 0 && level.warmupdamage == 0)
 		return;
 
 	if(self.sessionteam == "spectator")
@@ -1272,6 +1288,14 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		body = self cloneplayer();
 	self.autobalance = undefined;
 
+	if((isPlayer(attacker)) && attacker != self)
+	{
+		if(self.pers["team"] == "allies")
+			level.alliesLastKilled = true;
+		else if(self.pers["team"] == "axis")
+			level.axisLastKilled = true;
+	}
+
 	updateTeamStatus();
 
 	// TODO: Add additional checks that allow killcam when the last player killed wouldn't end the round (bomb is planted)
@@ -1293,9 +1317,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			currentorigin = self.origin;
 			currentangles = self.angles;
 			level.specmode = "death";
-			level.z_rpam_player_specmode = "death";
-			level.z_rpam_spec_specmode = "death";
-
+			
 			self thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
 		}
 		else if(game["matchstarted"] && game["doFinalKillcam"])
@@ -1322,7 +1344,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 						primaryb = player getWeaponSlotWeapon("primaryb");
 
 						// If a menu selection was made let's check pam rules first
-						if(getCvar("rpam_riflesonly") == "0")
+						if(getCvar("scr_force_bolt_rifles") == "0")
 						{
 							if(isDefined(player.oldweapon))
 							{
@@ -1365,7 +1387,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 									player.pers["spawnweapon"] = player.pers["weapon1"];
 							}
 						}
-						else if(getCvar("rpam_riflesonly") == "1")
+						else if(getCvar("scr_force_bolt_rifles") == "1")
 						{
 							if(isDefined(player.oldweapon))
 							{
@@ -1419,8 +1441,6 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 						currentorigin = self.origin;
 						currentangles = self.angles;
 						level.specmode = "death";
-						level.z_rpam_player_specmode = "death";
-						level.z_rpam_spec_specmode = "death";
 
 						player thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
 					}
@@ -3368,6 +3388,22 @@ updateGametypeCvars()
 					iprintln("^3The FG42 has been turned ^1OFF!");
 				else
 					iprintln("^3The FG42 has been turned ^2ON!");
+			}
+			
+			showcommand_after_round_report = getCvarInt("pam_afterroundreport");
+			if (showcommand_after_round_report != level.afterroundreport)
+			{
+				level.afterroundreport = showcommand_after_round_report;
+				if (showcommand_after_round_report == 1)
+				{
+					iprintln("^3pam_afterroundreport ^7has been turned ^5ON");
+					iprintln("^9pam_afterroundreport 1");
+				}
+				else if (showcommand_after_round_report == 0)
+				{
+					iprintln("^5pam_afterroundreport ^7has been turned ^1OFF");
+					iprintln("^9pam_afterroundreport 0");
+				}
 			}
 
 			level.checksettings = 0;
