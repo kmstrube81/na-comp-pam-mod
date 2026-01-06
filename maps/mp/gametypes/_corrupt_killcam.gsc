@@ -10,6 +10,7 @@ corrupt_StartGameType()
 
 corrupt_killcam(attackerNum, delay)
 {
+	
 	self endon("spawned");
 	
 	// killcam
@@ -160,4 +161,27 @@ corrupt_spawnedKillcamCleanup()
 
 	self waittill("spawned");
 	self corrupt_removeKillcamElements();
+}
+
+corrupt_failsafe()
+{
+	self endon("postround");
+	if(isDefined(level.killcamFailsafe))
+		return;
+	
+	level.killcamFailsafe = true;
+	
+	i = 0;
+	
+	while(i < 14)
+	{
+		
+		wait 1;
+		i++;
+	}
+	
+	level.killcamFailsafe = undefined;
+	
+	level notify("corrupt_killcam");
+	level notify("postround");
 }

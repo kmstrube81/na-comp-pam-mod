@@ -263,7 +263,7 @@ drawPlayerCard(player, pos)
 	self endon("flash_playercard");
 	self notify("flash_playercard");
 	
-	if(!isDefined(player))
+	if(!isDefined(player) || player == -1)
 		return;
 	
 	if(pos == 0)
@@ -554,7 +554,9 @@ spectatePlayerCard()
 			self iprintlnbold(" ");
 			self iprintlnbold(" ");
 			self iprintlnbold(" ");
-			self iprintlnbold("Spectating: " + getPlayerName(self.spectatedclient));
+			name = getPlayerName(self.spectatedclient);
+			if(isDefined(name))
+				self iprintlnbold("Spectating: " + name);
 				
 		}
 		if(self meleeButtonPressed())
@@ -566,7 +568,9 @@ spectatePlayerCard()
 			self iprintlnbold(" ");
 			self iprintlnbold(" ");
 			self iprintlnbold(" ");
-			self iprintlnbold("Spectating: " + getPlayerName(self.spectatedclient));
+			name = getPlayerName(self.spectatedclient);
+			if(isDefined(name))
+				self iprintlnbold("Spectating: " + name);
 			
 		}
 		
@@ -585,7 +589,7 @@ spectatePlayerCard()
 getPlayerName(id)
 {
 	if(id == -1)
-		return "nobody";
+		return undefined;
 	
 	players = getentarray("player", "classname");
 	for(i = 0; i < players.size; i++)
@@ -594,7 +598,7 @@ getPlayerName(id)
 		if(id == player getEntityNumber())
 			return player.name;
 	}
-	return "nobody";
+	return undefined;
 }
 
 isPlayerDead(id)
@@ -799,11 +803,6 @@ handleMenuResponse(response)
 	
 }
 
-
-
-
-
-
 compareStrings(a, b)
 {
 	alen = a.size;
@@ -946,4 +945,125 @@ getCharValue(ch)
 
 	default: return 0; // unknown / non-printable
 	}
+}
+
+// CODE BELOW ORIGINALLY FROM CoDAM
+splitArray( str, sep, quote, skipEmpty )
+{
+	if ( !isdefined( str ) || ( str == "" ) )
+		return ( [] );
+
+	if ( !isdefined( sep ) || ( sep == "" ) )
+		sep = ";";	// Default separator
+
+	if ( !isdefined( quote ) )
+		quote = "";
+
+	skipEmpty = isdefined( skipEmpty );
+
+	a = _splitRecur( 0, str, sep, quote, skipEmpty );
+
+	return ( a );
+}
+
+_splitRecur( iter, str, sep, quote, skipEmpty )
+{
+	s = sep[ iter ];
+
+	_a = [];
+	_s = "";
+	doQuote = false;
+	for ( i = 0; i < str.size; i++ )
+	{
+		ch = str[ i ];
+		if ( ch == quote )
+		{
+			doQuote = !doQuote;
+
+			if ( iter + 1 < sep.size )
+				_s += ch;
+		}
+		else
+		if ( ( ch == s ) && !doQuote )
+		{
+			if ( ( _s != "" ) || !skipEmpty )
+			{
+				_l = _a.size;
+
+				if ( iter + 1 < sep.size )
+				{
+					_x = _splitRecur( iter + 1, _s,	sep, quote, skipEmpty );
+
+					if ( ( _x.size > 0 ) || !skipEmpty )
+					{
+						_a[ _l ][ "str" ] = _s;
+						_a[ _l ][ "fields" ] = _x;
+					}
+				}
+				else
+					_a[ _l ] = _s;
+			}
+
+			_s = "";
+		}
+		else
+			_s += ch;
+	}
+
+	if ( _s != "" )
+	{
+		_l = _a.size;
+
+		if ( iter + 1 < sep.size )
+		{
+			_x = _splitRecur( iter + 1, _s, sep, quote, skipEmpty );
+			if ( _x.size > 0 )
+			{
+				_a[ _l ][ "str" ] = _s;
+				_a[ _l ][ "fields" ] = _x;
+			}
+		}
+		else
+			_a[ _l ] = _s;
+	}
+
+	return ( _a );
+}
+
+findStr( find, str, pos )
+{
+	if ( !isdefined( find ) || ( find == "" ) || 
+		 !isdefined( str ) || 
+		 !isdefined( pos ) || 
+		 ( find.size > str.size ) )
+		return ( -1 );
+
+	fsize = find.size;
+	ssize = str.size;
+
+	switch ( pos )
+	{
+	  case "start": place = 0 ; break;
+	  case "end":	place = ssize - fsize; break;
+	  default:	place = 0 ; break;
+	}
+
+	for ( i = place; i < ssize; i++ )
+	{
+		if ( i + fsize > ssize )
+			break;			// Too late to compare
+
+		// Compare now ...
+		for ( j = 0; j < fsize; j++ )
+			if ( str[ i + j ] != find[ j ] )
+				break;		// No match
+
+		if ( j >= fsize )
+			return ( i );		// Found it!
+
+		if ( pos == "start" )
+			break;			// Didn't find at start
+	}
+
+	return ( -1 );
 }

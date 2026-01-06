@@ -2165,6 +2165,10 @@ endRound(roundwinner, doKillcam)
 			players[i] playLocalSound("MP_announcer_round_draw");
 	}
 
+	
+	if(!isDefined(level.killcamFailsafe))
+		level thread maps\mp\gametypes\_corrupt_killcam::corrupt_failsafe();
+
 	wait 5;
 
 	winners = "";
@@ -3500,6 +3504,9 @@ updateTeamStatus()
 		level.didexist["allies"] = true;
 	if(level.exist["axis"])
 		level.didexist["axis"] = true;
+
+	if(!game["matchstarted"])
+		return;
 
 	if(level.warmup == 1)
 		return;
