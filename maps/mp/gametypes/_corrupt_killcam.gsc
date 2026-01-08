@@ -182,6 +182,6 @@ corrupt_failsafe()
 	
 	level.killcamFailsafe = undefined;
 	
-	level notify("corrupt_killcam");
+	level notify("corrupt_killcam_over");
 	level notify("postround");
 }

@@ -10,7 +10,7 @@ Get_Current_PAM_Ver()
 Get_Stock_PK3()
 {
 	// List all Allowed PK3 file names HERE separated by a space.  DO NOT include '.pk3'
-	level.stockPK3 = "uomappack00 pakuo07 pakuo06 pakuo05 pakuo04 pakuo03 pakuo02 pakuo01 pakuo00 pakb paka pak9 pak8 pak6 pak5 pak4 pak3 pak2 pak1 pak0 z_svr_pamuo_V3_1";
+	level.stockPK3 = "uomappack00 pakuo07 pakuo06 pakuo05 pakuo04 pakuo03 pakuo02 pakuo01 pakuo00 pakb paka pak9 pak8 pak6 pak5 pak4 pak3 pak2 pak1 pak0 svr_na-comp-pam-mod-v20260106c zclient_playercards-v20251124";
 }
 
 // Compares Known PAM Modes to catch mistakes, needs to be updated if new pam modes are included

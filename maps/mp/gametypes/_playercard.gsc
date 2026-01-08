@@ -545,7 +545,7 @@ spectatePlayerCard()
 		
 		oldorigin = self.origin;
 		
-		if(self attackButtonPressed() || isPlayerDead(self.spectatedclient))
+		if(self attackButtonPressed() || (isDefined(self.spectatedclient) && isPlayerDead(self.spectatedclient)))
 		{
 			while(self attackButtonPressed())
 				wait 0.05;

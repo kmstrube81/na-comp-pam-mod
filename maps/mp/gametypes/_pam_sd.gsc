@@ -1963,6 +1963,9 @@ startRound()
 	{
 		if(level.warmup == 1)
 			return;
+		
+		if(!game["matchstarted"])
+			return;
 
 		announcement(&"SD_TIMEHASEXPIRED");
 		level thread endRound("draw");
@@ -2357,9 +2360,11 @@ endRound(roundwinner, doKillcam)
 	}
 
 	level notify("postround");
-	game["finaldelay"] = (getTime() - game["finaldelay"]) / 1000;
 	if(doKillcam)
+	{
+		game["finaldelay"] = (getTime() - game["finaldelay"]) / 1000;
 		level waittill("corrupt_killcam_over");
+	}
 
 	if ( (level.teambalance > 0) && (game["BalanceTeamsNextRound"]) )
 	{
@@ -3427,6 +3432,10 @@ updateTeamStatus()
 	
 	oldvalue["allies"] = level.exist["allies"];
 	oldvalue["axis"] = level.exist["axis"];
+	if(!isDefined(level.numexist["allies"]))
+		level.numexist["allies"] = oldvalue["allies"];
+	if(!isDefined(level.numexist["axis"]))
+		level.numexist["axis"] = oldvalue["axis"];
 	level.exist["allies"] = 0;
 	level.exist["axis"] = 0;
 	
@@ -3514,10 +3523,15 @@ updateTeamStatus()
 	if(level.roundended)
 		return;
 	
-	if(!isDefined(level.clutchsituation["allies"]))
+	if(!isDefined(level.acesituation))
+	{
+		level.acesituation["allies"] = [];
+	}
+	if(!isDefined(level.clutchsituation))
+	{
 		level.clutchsituation["allies"] = false;
-	if(!isDefined(level.clutchsituation["axis"]))
 		level.clutchsituation["axis"] = false;
+	}
 	
 	if(level.exist["allies"] == 1 && level.exist["axis"] > 2)
 	{
@@ -3891,6 +3905,10 @@ bomb_countdown()
 	} else {
 		announcement(&"SD_AXISMISSIONACCOMPLISHED");
 	}
+	
+	if(level.exist[game["defenders"]])
+		level.acesituation[game["attackers"]] = false;
+	
 	level thread endRound(game["attackers"]);
 }
 
@@ -4004,7 +4022,10 @@ bomb_think()
 
 					if(level.warmup == 1)
 						return;	
-
+					
+					if(level.exist[game["attackers"]])
+						level.acesituation[game["defenders"]] = false;
+					
 					level thread endRound(game["defenders"]);
 					return;	//TEMP, script should stop after the wait .05
 				}
