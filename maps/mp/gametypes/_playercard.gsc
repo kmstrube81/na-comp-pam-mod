@@ -263,13 +263,10 @@ drawPlayerCard(player, pos)
 	self endon("flash_playercard");
 	self notify("flash_playercard");
 	
-	if(!isDefined(player) || player == -1)
+	if(!isDefined(player))
 		return;
 	
-	if(pos == 0)
-		id = player;
-	else
-		id = player getEntityNumber();
+	id = player getEntityNumber();
 	
 	if(getCvar("playercard_size") == "")
 		playercard_size = 1;
@@ -528,18 +525,16 @@ spectatePlayerCard()
 	self endon("spawned");
 	self endon("corrupt_killcam");
 	
-	oldspec = -1;
+	oldspec = undefined;
 	oldorigin = (0,0,0);
 	self.spectatedclient = self getSpectatorClient("next");
 	self drawPlayerCard(self.spectatedclient, 0);
 	while(true)
 	{
-		if(!isDefined(self.spectatedclient))
-			self.spectatedclient = -1;
 		
 		if(self.origin != oldorigin)
 		{
-			self.spectatedclient = -1;
+			self.spectatedclient = undefined;
 			self notify("destroy_playercard");
 		}
 		
@@ -574,9 +569,9 @@ spectatePlayerCard()
 			
 		}
 		
-		if(self.spectatedclient != -1)
+		if(isDefined(self.spectatedclient))
 		{
-			if(oldspec != self.spectatedclient){
+			if(isDefined(oldspec) && oldspec != self.spectatedclient){
 				
 				self drawPlayerCard(self.spectatedclient, 0);
 			}
@@ -586,22 +581,16 @@ spectatePlayerCard()
 	}
 }
 
-getPlayerName(id)
+getPlayerName(player)
 {
-	if(id == -1)
+	if(!isDefined(player))
 		return undefined;
 	
-	players = getentarray("player", "classname");
-	for(i = 0; i < players.size; i++)
-	{
-		player = players[i];
-		if(id == player getEntityNumber())
-			return player.name;
-	}
-	return undefined;
+	return player.name;
+
 }
 
-isPlayerDead(id)
+isPlayerDead(spectatedPlayer)
 {
 
 	players = getentarray("player", "classname");
@@ -610,18 +599,18 @@ isPlayerDead(id)
 		player = players[i];
 		if(player == self)
 			continue;
-		if(id == -1)
+		if(!isDefined(spectatedPlayer))
 		{
 			if(self.pers["team"] == "spectator" && player.sessionstate == "playing")
 				return true;
 			if( player.sessionstate == "playing" && self.pers["team"] != "spectator" && player.pers["team"] == self.pers["team"] )
 				return true;
-			if( level.allowenemyspectate && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
+			if( (isDefined(level.allowenemyspectate) && level.allowenemyspectate) && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
 				return true;
 		}
-		if(id == player getEntityNumber())
+		if(spectatedPlayer == player)
 		{
-			if (player.sessionstate == "dead" || (isDefined(player.pers["team"]) && player.pers["team"] == "spectator") || ( !level.allowenemyspectate && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" ))
+			if (player.sessionstate == "dead" || (isDefined(player.pers["team"]) && player.pers["team"] == "spectator") || ((!isDefined(level.allowenemyspectate) || !level.allowenemyspectate) && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" ))
 				return true;
 		}
 	}
@@ -631,7 +620,8 @@ isPlayerDead(id)
 getSpectatorClient(dir)
 {
 	if(!isDefined(self.spectatedclient))
-		self.spectatedclient = -1;
+		id = -1;
+	else id = self.spectatedclient getEntityNumber();
 	
 	clients = [];
 	
@@ -649,25 +639,37 @@ getSpectatorClient(dir)
 		if ( !level.allowenemyspectate && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" )
 			continue;
 		
-		clients[clients.size] = player getEntityNumber();
+		clients[clients.size] = player;
 			
 	}
 	for(i = 0; i < clients.size; i++)
 	{
-		if(!isDefined(min) || min > clients[i])
-			min = clients[i];
-		if(!isDefined(max) || max < clients[i])
-			max = clients[i];
-			
-		if(clients[i] > self.spectatedclient)
+		if(!isDefined(min) || min > clients[i] getEntityNumber())
 		{
-			if(!isDefined(next) || clients[i] < next)
-				next = clients[i];
+			min = clients[i] getEntityNumber();
+			min_index = i;
 		}
-		else if(clients[i] < self.spectatedclient)
+		if(!isDefined(max) || max < clients[i] getEntityNumber())
 		{
-			if(!isDefined(prev) || clients[i] > prev)
-				prev = clients[i];
+			max = clients[i] getEntityNumber();
+			max_index = i;
+		}
+			
+		if(clients[i] getEntityNumber() > id)
+		{
+			if(!isDefined(next) || clients[i] getEntityNumber() < next)
+			{
+				next = clients[i] getEntityNumber();
+				next_index = i;
+			}
+		}
+		else if(clients[i] getEntityNumber() < id)
+		{
+			if(!isDefined(prev) || clients[i] getEntityNumber() > prev)
+			{
+				prev = clients[i] getEntityNumber();
+				prev_index = i;
+			}
 		}
 	}
 	
@@ -675,24 +677,24 @@ getSpectatorClient(dir)
 	switch(dir)
 	{
 		case "next":
-			if(self.spectatedclient == -1 || !isDefined(next))
+			if(id == -1 || !isDefined(next))
 				if(isDefined(min))
-					return min; //lowest client num
+					return clients[min_index]; //lowest client num
 				else
-					return -1;
+					return undefined;
 			else
-				return next;
+				return clients[next_index];
 		case "prev":
-			if(self.spectatedclient == -1 || !isDefined(prev))
+			if(id == -1 || !isDefined(prev))
 				if(isDefined(max))
-					return max; //highest client num
+					return clients[max_index]; //highest client num
 				else
-					return -1;
+					return undefined;
 			else
-				return prev;
+				return clients[prev_index];
 	}
 	
-	return -1;
+	return undefined;
 }
 
 handleMenuResponse(response)

@@ -182,6 +182,9 @@ PamMain()
 		case "na_comp_pub":
 			thread maps\mp\gametypes\rules\_na_comp_pub_sd_rules::Rules();
 			break;
+		case "na_comp_pub_vanilla":
+			thread maps\mp\gametypes\rules\_na_comp_pub_sd_vanilla_rules::Rules();
+			break;
 		case "lan":
 			thread maps\mp\gametypes\rules\_lan_sd_rules::Rules();
 			break;
@@ -231,6 +234,7 @@ PamMain()
 	level.teambalance = getCvarInt("scr_teambalance");
 	level.allowfreelook = getCvarInt("scr_freelook");
 	level.allowenemyspectate = getCvarInt("scr_spectateenemy");
+	level.battlerank = getCvarInt("scr_battlerank");
 	level.drawfriend = getCvarInt("scr_drawfriend");
 	level.ffire = getCvarInt("scr_friendlyfire");
 	level.pure = getCvarInt("sv_pure");
@@ -248,6 +252,7 @@ PamMain()
 	level.afterroundreport = getCvarInt("pam_afterroundreport");
 	//CODUO NA COMP ADDITION - WARM UP DAMAGE
 	level.warmupdamage = getCvarInt("sv_warmupdamage");
+	level.warmupreset= getCvarInt("sv_warmupreset");
 	
 	
 	level.halfround = getcvarint("scr_sd_half_round");
@@ -338,7 +343,8 @@ PamMain()
 	
 	if (!isdefined (game["BalanceTeamsNextRound"]))
 		game["BalanceTeamsNextRound"] = false;
-	
+		
+	level.numexist = [];
 	level.exist["allies"] = 0;
 	level.exist["axis"] = 0;
 	level.exist["teams"] = false;
@@ -1269,6 +1275,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			if(self.pers["team"] == "axis")
 				level.acesituation["allies"] = false;
 		}
+	} else {
+		level.acesituation[attacker.pers["team"]] = false;
+		level.aceplayer[attacker.pers["team"]] = attacker;
 	}
 
 	// Make the player drop his weapon
@@ -2019,36 +2028,37 @@ checkMatchStart()
 						level.half1start destroy();
 
 					// get rid of warmup weapons
-					players = getentarray("player", "classname");
-					for(i = 0; i < players.size; i++)
-					{ 
-	
-						//drop weapons and make spec
-						player = players[i];
-						players[i].pers["weapon"] = undefined;
-						players[i].pers["weapon1"] = undefined;
-						players[i].pers["weapon2"] = undefined;
-						players[i].pers["spawnweapon"] = undefined;
-						player.sessionstate = "spectator";
-						player.spectatorclient = -1;
-						player.archivetime = 0;
-						player.reflectdamage = undefined;
-	
-						//pull up menus
-						player = players[i];
-						player closeMenu();
-						player setClientCvar("g_scriptMainMenu", "main");
-						if(player.pers["team"] == "allies")
-							player setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
-						else
-							player setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
-						if(player.pers["team"] == "allies")
-							player openMenu(game["menu_weapon_allies"]);
-						else if(player.pers["team"] == "axis")
-							player openMenu(game["menu_weapon_axis"]);
-	
-					} //end for
-
+					if(level.warmupreset){
+						players = getentarray("player", "classname");
+						for(i = 0; i < players.size; i++)
+						{ 
+		
+							//drop weapons and make spec
+							player = players[i];
+							players[i].pers["weapon"] = undefined;
+							players[i].pers["weapon1"] = undefined;
+							players[i].pers["weapon2"] = undefined;
+							players[i].pers["spawnweapon"] = undefined;
+							player.sessionstate = "spectator";
+							player.spectatorclient = -1;
+							player.archivetime = 0;
+							player.reflectdamage = undefined;
+		
+							//pull up menus
+							player = players[i];
+							player closeMenu();
+							player setClientCvar("g_scriptMainMenu", "main");
+							if(player.pers["team"] == "allies")
+								player setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
+							else
+								player setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
+							if(player.pers["team"] == "allies")
+								player openMenu(game["menu_weapon_allies"]);
+							else if(player.pers["team"] == "axis")
+								player openMenu(game["menu_weapon_axis"]);
+		
+						} //end for
+					}
 					level.warmup = 0;
 				}
 
@@ -3525,7 +3535,8 @@ updateTeamStatus()
 	
 	if(!isDefined(level.acesituation))
 	{
-		level.acesituation["allies"] = [];
+
+		level.acesituation = [];
 	}
 	if(!isDefined(level.clutchsituation))
 	{

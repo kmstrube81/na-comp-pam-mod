@@ -4,11 +4,11 @@ Rules()
 	setcvar("pam_autoreadytime", "30"); // Time in Seconds for players to autoready, set to 0 to disable
 	setcvar("pam_autoreadycount", "3"); // Number of players on each team required before autoready, set to 0 to disable
 
-	setcvar("scr_final_killcam", "1"); // Final Killcam enabled
+	setcvar("scr_final_killcam", "0"); // Final Killcam enabled
 	
-	setcvar("sv_playercards", "1"); // Enable playercards
+	setcvar("sv_playercards", "0"); // Enable playercards
 	
-	setcvar("pam_afterroundreport", "1"); //Enable post round damage reports
+	setcvar("pam_afterroundreport", "0"); //Enable post round damage reports
 
 	/* Match Setup Options */
 	setcvar("scr_sd_half_round" , "10");	// Switch AFTER this round.
