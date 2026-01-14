@@ -384,6 +384,7 @@ precache()
 		precacheItem("smokegrenade_mp");
 		precacheItem("flashgrenade_mp");
 		precacheItem("colt_mp");
+		precacheItem("mosin_nagant_mp");
 		precacheItem("m1carbine_mp");
 		precacheItem("m1garand_mp");
 		precacheItem("thompson_mp");

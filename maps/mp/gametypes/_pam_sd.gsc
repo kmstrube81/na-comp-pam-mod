@@ -560,6 +560,7 @@ Callback_StartGameType()
 	maps\mp\gametypes\_pam_teams::initGlobalCvars();
 	maps\mp\gametypes\_pam_teams::initWeaponCvars();
 	maps\mp\gametypes\_pam_teams::restrictPlacedWeapons();
+	maps\mp\gametypes\_corrupt_killcam::corrupt_StartGameType();
 	thread maps\mp\gametypes\_pam_teams::updateGlobalCvars();
 	thread maps\mp\gametypes\_pam_teams::updateWeaponCvars();
 
@@ -778,7 +779,13 @@ Callback_PlayerConnect()
 				//------------------------------------------------------------------------------
 				
 				if(response != self.pers["team"] && self.sessionstate == "playing")
+				{
+					if(self.pers["team"] == "allies")
+						level.alliesLastKilled = false;
+					else if(self.pers["team"] == "axis")
+						level.axisLastKilled = false;
 					self suicide();
+				} 
 	                        
 				self.pers["team"] = response;
 				self.pers["teamTime"] = (gettime() / 1000);
@@ -967,8 +974,8 @@ Callback_PlayerDisconnect()
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
-	if(level.warmup != 0)
-		return;
+	if(level.warmup != 0) //&& level.warmupdamage == 0)
+		return;			  //uncomment this to allow players to be damaged during warmup
 
 	if(self.sessionteam == "spectator")
 		return;
@@ -987,7 +994,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	{
 		if(isPlayer(eAttacker) && (self != eAttacker) && (self.pers["team"] == eAttacker.pers["team"]))
 		{
-			if(level.friendlyfire == "1" || sMeansOfDeath == "MOD_CRUSH_TANK" || sMeansOfDeath == "MOD_CRUSH_JEEP")
+			if(level.friendlyfire == "1" || sMeansOfDeath == "MOD_CRUSH_TANK" || sMeansOfDeath == "MOD_CRUSH_JEEP") // || (level.warmup && level.warmupdamage))
 			{
 				// Make sure at least one point of damage is done
 				if(iDamage < 1)
@@ -1088,8 +1095,8 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 {
 	self endon("spawned");
 
-	if(level.warmup != 0)
-		return;
+	if(level.warmup != 0) //&& level.warmupdamage == 0)
+		return;           // uncomment this to allow players to die during warmup
 
 	if(self.sessionteam == "spectator")
 		return;
@@ -1137,6 +1144,10 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		if(attacker == self) // killed himself
 		{
 			doKillcam = false;
+			if(self.pers["team"] == "allies")
+				level.alliesLastKilled = false;
+			else if(self.pers["team"] == "axis")
+				level.axisLastKilled = false;
 			if (!isdefined (self.autobalance))
 			{
 				attacker.pers["score"]--;
@@ -1171,7 +1182,11 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	else // If you weren't killed by a player, you were in the wrong place at the wrong time
 	{
 		doKillcam = false;
-
+		if(self.pers["team"] == "allies")
+			level.alliesLastKilled = false;
+		else if(self.pers["team"] == "axis")
+			level.axisLastKilled = false;
+		
 		self.pers["score"]--;
 		self.score = self.pers["score"];
 
@@ -1181,7 +1196,10 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		lpattackerteam = "world";
 	}
 
-	logPrint("K;" + lpselfguid + ";" + lpselfnum + ";" + lpselfteam + ";" + lpselfname + ";" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + sWeapon + ";" + iDamage + ";" + sMeansOfDeath + ";" + sHitLoc + "\n");
+	if(!level.warmup)
+		logPrint("K;" + lpselfguid + ";" + lpselfnum + ";" + lpselfteam + ";" + lpselfname + ";" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + sWeapon + ";" + iDamage + ";" + sMeansOfDeath + ";" + sHitLoc + "\n");
+
+	//TO DO ACE/CLUTCH LOGIC
 
 	// Make the player drop his weapon
 	if (!isdefined (self.autobalance))
@@ -1200,6 +1218,14 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		body = self cloneplayer();
 	self.autobalance = undefined;
 
+	if((isPlayer(attacker)) && attacker != self)
+	{
+		if(self.pers["team"] == "allies")
+			level.alliesLastKilled = true;
+		else if(self.pers["team"] == "axis")
+			level.axisLastKilled = true;
+	}
+
 	updateTeamStatus();
 
 	// TODO: Add additional checks that allow killcam when the last player killed wouldn't end the round (bomb is planted)
@@ -1209,14 +1235,154 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	delay = 2;	// Delay the player becoming a spectator till after he's done dying
 	wait delay;	// ?? Also required for Callback_PlayerKilled to complete before killcam can execute
 
-	if(doKillcam && !level.roundended)
+	if(doKillcam)
+	{
+		//TO DO : ADD PLAYERCARD
 		self thread killcam(attackerNum, delay);
+	}
 	else
 	{
-		currentorigin = self.origin;
-		currentangles = self.angles;
+		if(!level.roundended)
+		{
+			currentorigin = self.origin;
+			currentangles = self.angles;
+			level.specmode = "death";
+			
+			self thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+		}
+		else if(game["matchstarted"] && game["doFinalKillcam"])
+		{
+			if((isPlayer(attacker)) && attacker != self)  //if killed by self or world don't do final killcam
+			{
 
-		self thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+				logPrint("A;" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + "final_killcam" + "\n");
+				game["finaldelay"] = getTime();
+				level waittill("postround");
+				delay = delay + game["finaldelay"];
+				level endon("corrupt_killcam");
+
+				players = getentarray("player", "classname");
+				for(i = 0; i < players.size; i++)
+				{	
+					player = players[i];
+					
+					player notify("end_killcam");
+					
+					if(isDefined(player.pers["team"]) && player.pers["team"] != "spectator" && player.sessionstate == "playing")
+					{
+						primary = player getWeaponSlotWeapon("primary");
+						primaryb = player getWeaponSlotWeapon("primaryb");
+
+						// If a menu selection was made let's check pam rules first
+						if(getCvar("scr_force_bolt_rifles") == "0")
+						{
+							if(isDefined(player.oldweapon))
+							{
+								// If a new weapon has since been picked up (this fails when a player picks up a weapon the same as his original)
+								if(player.oldweapon != primary && player.oldweapon != primaryb && primary != "none")
+								{
+									player.pers["weapon1"] = primary;
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player getCurrentWeapon();
+								} // If the player's menu chosen weapon is the same as what is in the primaryb slot, swap the slots
+								else if(player.pers["weapon"] == primaryb)
+								{
+									player.pers["weapon1"] = primaryb;
+									player.pers["weapon2"] = primary;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								} // Give them the weapon they chose from the menu
+								else
+								{
+									player.pers["weapon1"] = player.pers["weapon"];
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								}
+							} // No menu choice was ever made, so keep their weapons and spawn them with what they're holding, unless it's a pistol or grenade
+							else
+							{
+								if(primary == "none")
+									player.pers["weapon1"] = player.pers["weapon"];
+								else
+									player.pers["weapon1"] = primary;
+									
+								player.pers["weapon2"] = primaryb;
+
+								spawnweapon = player getCurrentWeapon();
+								if ( (spawnweapon == "none") && (isdefined (primary)) ) 
+									spawnweapon = primary;
+
+								if(!maps\mp\gametypes\_pam_teams::isPistolOrGrenade(spawnweapon))
+									player.pers["spawnweapon"] = spawnweapon;
+								else
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+							}
+						}
+						else if(getCvar("scr_force_bolt_rifles") == "1")
+						{
+							if(isDefined(player.oldweapon))
+							{
+								// If a new weapon has since been picked up (this fails when a player picks up a weapon the same as his original)
+								if(player.oldweapon != primary && player.oldweapon != primaryb && primary != "none")
+								{
+									player.pers["weapon1"] = kar98k_mp;
+									player.pers["weapon2"] = mosin_nagant_mp;
+									player.pers["spawnweapon"] = player getCurrentWeapon();
+								} // If the player's menu chosen weapon is the same as what is in the primaryb slot, swap the slots
+								else if(player.pers["weapon"] == primaryb)
+								{
+									player.pers["weapon1"] = kar98k_mp;
+									player.pers["weapon2"] = mosin_nagant_mp;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								} // Give them the weapon they chose from the menu
+								else
+								{
+									player.pers["weapon1"] = player.pers["weapon"];
+									player.pers["weapon2"] = primaryb;
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+								}
+							} // No menu choice was ever made, so keep their weapons and spawn them with what they're holding, unless it's a pistol or grenade
+							else
+							{
+								if(primary == "none")
+									player.pers["weapon1"] = player.pers["weapon"];
+								else
+									player.pers["weapon1"] = primary;
+									
+								player.pers["weapon2"] = primaryb;
+
+								spawnweapon = player getCurrentWeapon();
+								if ( (spawnweapon == "none") && (isdefined (primary)) ) 
+									spawnweapon = primary;
+
+								if(!maps\mp\gametypes\_pam_teams::isPistolOrGrenade(spawnweapon))
+									player.pers["spawnweapon"] = spawnweapon;
+								else
+									player.pers["spawnweapon"] = player.pers["weapon1"];
+							}
+						}
+					}
+	
+						
+					if(player == self)
+						continue;
+					
+					if(player.sessionstate != "dead")
+					{
+						currentorigin = self.origin;
+						currentangles = self.angles;
+						level.specmode = "death";
+
+						player thread spawnSpectator(currentorigin + (0, 0, 60), currentangles);
+					}
+					//TO DO : ADD PLAYERCARD
+					player thread maps\mp\gametypes\_corrupt_killcam::corrupt_killcam(attackerNum, delay);
+
+				}
+			
+				maps\mp\gametypes\_corrupt_killcam::corrupt_killcam(attackerNum, delay);
+			}
+			level notify("corrupt_killcam_over");
+		}
 	}
 }
 
@@ -1869,8 +2035,12 @@ resetScores()
 
 }
 
-endRound(roundwinner)
+endRound(roundwinner, doKillcam)
 {
+	
+	if(!isDefined(doKillcam))
+		doKillcam = false;
+	
 	level.switchprevent = false;
 	level endon("kill_endround");
 
@@ -1923,6 +2093,9 @@ endRound(roundwinner)
 		for(i = 0; i < players.size; i++)
 			players[i] playLocalSound("MP_announcer_round_draw");
 	}
+
+	if(!isDefined(level.killcamFailsafe))
+		level thread maps\mp\gametypes\_corrupt_killcam::corrupt_failsafe();
 
 	wait 5;
 
@@ -2068,6 +2241,13 @@ endRound(roundwinner)
 					player.pers["spawnweapon"] = player.pers["weapon1"];
 			}
 		}
+	}
+
+	level notify("postround");
+	if(doKillcam)
+	{
+		game["finaldelay"] = (getTime() - game["finaldelay"]) / 1000;
+		level waittill("corrupt_killcam_over");
 	}
 
 	if ( (level.teambalance > 0) && (game["BalanceTeamsNextRound"]) )
@@ -3189,7 +3369,7 @@ updateTeamStatus()
 		if(!level.bombplanted)
 		{
 			announcement(&"SD_ALLIESHAVEBEENELIMINATED");
-			level thread endRound("axis");
+			level thread endRound("axis",level.alliesLastKilled);
 			return;
 		}
 
@@ -3200,7 +3380,7 @@ updateTeamStatus()
 		if(level.exist["axis"])
 		{
 			announcement(&"SD_ALLIESHAVEBEENELIMINATED");
-			level thread endRound("axis");
+			level thread endRound("axis", level.alliesLastKilled);
 			return;
 		}
 
@@ -3215,7 +3395,7 @@ updateTeamStatus()
 		if(!level.bombplanted)
 		{
 			announcement(&"SD_AXISHAVEBEENELIMINATED");
-			level thread endRound("allies");
+			level thread endRound("allies",level.axisLastKilled);
 			return;
  		}
  		
@@ -3226,7 +3406,7 @@ updateTeamStatus()
 		if(level.exist["allies"])
 		{
 			announcement(&"SD_AXISHAVEBEENELIMINATED");
-			level thread endRound("allies");
+			level thread endRound("allies",level.axisLastKilled);
 			return;
 		}
 		
