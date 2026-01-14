@@ -3,14 +3,21 @@
 // Curent Revision placed here
 Get_Current_PAM_Ver()
 {
-	game["pamstring"] = &"P.A.M. UO V3.1";
+	game["pamstring"] = &"NA COMP PAM 20260114";
 }
 
 //The below lines should be updated each new release:
 Get_Stock_PK3()
 {
 	// List all Allowed PK3 file names HERE separated by a space.  DO NOT include '.pk3'
-	level.stockPK3 = "uomappack00 pakuo07 pakuo06 pakuo05 pakuo04 pakuo03 pakuo02 pakuo01 pakuo00 pakb paka pak9 pak8 pak6 pak5 pak4 pak3 pak2 pak1 pak0 z_svr_pamuo_V3_1";
+	level.stockPK3 = "uomappack00 pakuo07 pakuo06 pakuo05 pakuo04 pakuo03 pakuo02 pakuo01 pakuo00 pakb paka pak9 pak8 pak6 pak5 pak4 pak3 pak2 pak1 pak0 z_svr_na_comp_pam";
+}
+
+//The below lines should be updated for each new custom map added to the server
+Get_Custom_PK3()
+{
+	// List all Allowed PK3 file names HERE separated by a space.  DO NOT include '.pk3'
+	level.custommapsPK3 = "wawa_redux bellicourt_v1_1 carcasson_ctf_final cs_office fg_crash JH_Day mp_container mp_Rust mp_uo_railyard_ctf mp_uo_shipment uo_novoutpost z_dust2_ld z_emp_uo_killhosue Z_Nuenen z_xp_hanoi_uo Zzz_ctf_chateau Zzz_lw_railyard zzz_mp_vacant zzz_uo_pavlov_ctf zzz_uo_rocket_ctf zzz_uo_tigertown_ctf zzz_xp_standoff_uo zzzzzz_mp_mikecod3"
 }
 
 // Compares Known PAM Modes to catch mistakes, needs to be updated if new pam modes are included

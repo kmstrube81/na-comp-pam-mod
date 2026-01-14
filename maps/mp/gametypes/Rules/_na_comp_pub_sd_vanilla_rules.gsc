@@ -1,15 +1,15 @@
 Rules()
 {
-	/* DISABLE PUB OPTIONS			*/
-	setcvar("pam_autoreadytime", "0"); // Time in Seconds for players to autoready, set to 0 to disable
-	setcvar("pam_autoreadycount", "0"); // Number of players on each team required before autoready, set to 0 to disable
+	/* PUB OPTIONS			*/
+	setcvar("pam_autoreadytime", "30"); // Time in Seconds for players to autoready, set to 0 to disable
+	setcvar("pam_autoreadycount", "3"); // Number of players on each team required before autoready, set to 0 to disable
 
 	setcvar("scr_final_killcam", "0"); // Final Killcam enabled
 	
 	setcvar("sv_playercards", "0"); // Enable playercards
 	
-	setcvar("pam_afterroundreport", 0); //Enable post round damage reports
-	
+	setcvar("pam_afterroundreport", "0"); //Enable post round damage reports
+
 	/* Match Setup Options */
 	setcvar("scr_sd_half_round" , "10");	// Switch AFTER this round.
 
@@ -23,7 +23,7 @@ Rules()
 
 	setcvar("scr_sd_count_draws", "1");	// Re-play rounds that end in a draw
 
-	setcvar("g_ot", "1");	// Are there Overtime rules for this match? 0=No / 1=Yes
+	setcvar("g_ot", "0");	// Are there Overtime rules for this match? 0=No / 1=Yes
 	
 	// Overtime Settings
 	if (getcvarint("g_ot_active") > 0)
@@ -56,11 +56,11 @@ Rules()
 	setcvar("scr_rank_ppr" , "10"); //Sets the Points Per Rank
 
 	// Hostname and MOTD 
-	setcvar("sv_hostname" , "NA Competitive League"); 
-	setcvar("scr_motd" , "Wigglin' ma shit rn"); 
+	setcvar("sv_hostname" , "NA Competitive Pub Server"); 
+	setcvar("scr_motd" , "Join us on discord: https://discord.gg/Yux9EXxTqP"); 
 
 	//Logo
-	game["leaguestring"] = &"NA COMP League"; //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
+	game["leaguestring"] = &"NA COMP Pub"; //NOTE!!! NEVER REMOVE THE & SYMBOL OR SERVER WILL CRASH
 	
 
 
@@ -89,7 +89,7 @@ Rules()
 	// Warm-up Mines
 	setcvar("sv_warmupmines", "1"); //Leave this on for now. Mines need to be re-worked.
 	setcvar("sv_warmupdamage", "1");
-	setcvar("sv_warmupreset", "1"); //Reset Weapons after all players ready
+	setcvar("sv_warmupreset", "0"); //Reset Weapons after all players ready
 
 	// *****************************************************
 	// ************ Vehicle Settings ***********************
@@ -146,6 +146,7 @@ Rules()
 	setcvar("scr_allow_kar98k" , "1");
 	setcvar("scr_allow_m1garand" , "1");
 	setcvar("scr_allow_nagant" , "1");
+	setcvar("scr_allow_us_nagant" , "1");
 	setcvar("scr_allow_gewehr43" , "1");
 
 
@@ -219,7 +220,7 @@ Rules()
 	// *****************************************************
 	// ****************** Timeouts *************************
 	// *****************************************************
-	setcvar("g_timeoutsAllowed", "3"); //The number of timeouts allowed per side.
+	setcvar("g_timeoutsAllowed", "0"); //The number of timeouts allowed per side.
 	setcvar("g_timeoutLength", "60000"); //The length of each timeout.
 	setcvar("g_timeoutRecovery", "10000"); //The length of the preparation period which occurs after a time-in is called, or after a timeout expires.  This recovery period is used to alert all players that play is about to begin.
 	setcvar("g_timeoutBank", "180000"); //The total amount of time a team can spend in timeout.
@@ -229,7 +230,8 @@ Rules()
 	// *********** PAM UO Auto Demo/Screenshots ************
 	// *****************************************************
 	setcvar("g_autoscreenshot" , "1");
-	setcvar("g_autodemo" , "1");
+	setcvar("g_autodemo" , "0");
+
 	// *****************************************************
 	// *********** PAM UO Auto Console Lock ****************
 	// *****************************************************
@@ -251,10 +253,10 @@ Rules()
 	setcvar("sv_pure", "1");
 
 	// Team Icons 
-	setcvar("scr_drawfriend" , "1");
+	setcvar("scr_drawfriend" , "0");
 
 	// Friendly Fire 
-	setcvar("scr_friendlyfire" , "1");
+	setcvar("scr_friendlyfire" , "0");
 
 	// Kill Cam & Spectate
 	setcvar("scr_killcam" , "0");
@@ -263,17 +265,17 @@ Rules()
 	setcvar("g_deadChat" , "1");
 
 	// Auto Team Balance 
-	setcvar("scr_teambalance" , "0");
+	setcvar("scr_teambalance" , "1");
 
 	// Allow Voting 
 	setcvar("scr_allow_vote" , "1");
 	setcvar("g_allowvote" , "1");
 	setcvar("g_allowvotetempbanuser" , "0");
 	setcvar("g_allowvotetempbanclient" , "0");
-	setcvar("g_allowvotekick" , "1");
+	setcvar("g_allowvotekick" , "0");
 	setcvar("g_allowvoteclientkick" , "0");
-	setcvar("g_allowvotegametype" , "0");
-	setcvar("g_allowvotetypemap" , "0");
+	setcvar("g_allowvotegametype" , "1");
+	setcvar("g_allowvotetypemap" , "1");
 	setcvar("g_allowvotemap" , "1");
 	setcvar("g_allowvotemaprotate" , "0");
 	setcvar("g_allowvotemaprestart" , "1");

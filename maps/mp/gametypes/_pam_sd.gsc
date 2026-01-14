@@ -244,6 +244,9 @@ PamMain()
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
 	level.playersleft = getcvarint("sv_playersleft");
+	
+	
+	level.warmupreset= getCvarInt("sv_warmupreset");
 	level.halfround = getcvarint("scr_sd_half_round");
 	level.halfscore = getcvarint("scr_sd_half_score");
 	level.matchround = getcvarint("scr_sd_end_round");
@@ -1944,36 +1947,38 @@ checkMatchStart()
 						level.half1start destroy();
 
 					// get rid of warmup weapons
-					players = getentarray("player", "classname");
-					for(i = 0; i < players.size; i++)
-					{ 
-	
-						//drop weapons and make spec
-						player = players[i];
-						players[i].pers["weapon"] = undefined;
-						players[i].pers["weapon1"] = undefined;
-						players[i].pers["weapon2"] = undefined;
-						players[i].pers["spawnweapon"] = undefined;
-						player.sessionstate = "spectator";
-						player.spectatorclient = -1;
-						player.archivetime = 0;
-						player.reflectdamage = undefined;
-	
-						//pull up menus
-						player = players[i];
-						player closeMenu();
-						player setClientCvar("g_scriptMainMenu", "main");
-						if(player.pers["team"] == "allies")
-							player setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
-						else
-							player setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
-						if(player.pers["team"] == "allies")
-							player openMenu(game["menu_weapon_allies"]);
-						else if(player.pers["team"] == "axis")
-							player openMenu(game["menu_weapon_axis"]);
-	
-					} //end for
-
+					if(level.warmupreset)
+					{
+						players = getentarray("player", "classname");
+						for(i = 0; i < players.size; i++)
+						{ 
+		
+							//drop weapons and make spec
+							player = players[i];
+							players[i].pers["weapon"] = undefined;
+							players[i].pers["weapon1"] = undefined;
+							players[i].pers["weapon2"] = undefined;
+							players[i].pers["spawnweapon"] = undefined;
+							player.sessionstate = "spectator";
+							player.spectatorclient = -1;
+							player.archivetime = 0;
+							player.reflectdamage = undefined;
+		
+							//pull up menus
+							player = players[i];
+							player closeMenu();
+							player setClientCvar("g_scriptMainMenu", "main");
+							if(player.pers["team"] == "allies")
+								player setClientCvar("g_scriptMainMenu", game["menu_weapon_allies"]);
+							else
+								player setClientCvar("g_scriptMainMenu", game["menu_weapon_axis"]);
+							if(player.pers["team"] == "allies")
+								player openMenu(game["menu_weapon_allies"]);
+							else if(player.pers["team"] == "axis")
+								player openMenu(game["menu_weapon_axis"]);
+		
+						} //end for
+					}
 					level.warmup = 0;
 				}
 
