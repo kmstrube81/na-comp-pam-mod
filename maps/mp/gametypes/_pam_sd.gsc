@@ -179,6 +179,9 @@ PamMain()
 		case "na_comp":
 			thread maps\mp\gametypes\rules\_na_comp_sd_rules::Rules();
 			break;
+		case "na_comp_pub":
+			thread maps\mp\gametypes\rules\_na_comp_pub_sd_rules::Rules();
+			break;
 		case "lan":
 			thread maps\mp\gametypes\rules\_lan_sd_rules::Rules();
 			break;
@@ -234,6 +237,9 @@ PamMain()
 	level.vote = getCvarInt("g_allowVote");
 	level.sshock = getcvarint("scr_shellshock");
 	level.drophealth = getcvarint("scr_drophealth");
+	
+	level.autoreadytime = getcvarint("pam_autoreadytime");
+	level.autoreadycount = getcvarint("pam_autoreadycount");
 
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
