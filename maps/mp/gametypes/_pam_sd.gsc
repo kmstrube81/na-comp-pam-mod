@@ -232,6 +232,7 @@ PamMain()
 	level.allowfreelook = getCvarInt("scr_freelook");
 	level.allowenemyspectate = getCvarInt("scr_spectateenemy");
 	level.drawfriend = getCvarInt("scr_drawfriend");
+	level.battlerank = getCvarInt("scr_battlerank");
 	level.ffire = getCvarInt("scr_friendlyfire");
 	level.pure = getCvarInt("sv_pure");
 	level.vote = getCvarInt("g_allowVote");
@@ -240,6 +241,8 @@ PamMain()
 	
 	level.autoreadytime = getcvarint("pam_autoreadytime");
 	level.autoreadycount = getcvarint("pam_autoreadycount");
+	//CODUO NA COMP ADDITION - AFTER ROUND REPORT
+	level.afterroundreport = getCvarInt("pam_afterroundreport");
 
 	// Mod Specific Settings
 	level.league = getcvar("pam_mode");
@@ -593,6 +596,8 @@ Callback_PlayerConnect()
 	level.R_U_State[lpselfnum] = "notready";
 	self.R_U_Looping = 0;
 
+	self thread maps\mp\gametypes\_pam_round_report::onConnected();
+	self thread maps\mp\gametypes\_pam_utilities::ClientNetworkSync()
 	if(level.rdyup == 1)
 	{
 		self.statusicon = game["br_hudicons_allies_0"];
@@ -992,6 +997,8 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	if(!isDefined(vDir))
 		iDFlags |= level.iDFLAGS_NO_KNOCKBACK;
 
+	self thread maps\mp\gametypes\_pam_round_report::onPlayerDamaged(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc);
+
 	// check for completely getting out of the damage
 //	if(!(iDFlags & level.iDFLAGS_NO_PROTECTION))
 	{
@@ -1121,6 +1128,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	// send out an obituary message to all clients about the kill
 	obituary(self, attacker, sWeapon, sMeansOfDeath);
+	self thread maps\mp\gametypes\_pam_round_report::onPlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc);
 
 	self.sessionstate = "dead";
 	if(level.rdyup != 1)
@@ -2099,6 +2107,9 @@ endRound(roundwinner, doKillcam)
 			players[i] playLocalSound("MP_announcer_round_draw");
 	}
 
+	if(level.afterroundreport)
+		maps\mp\gametypes\_pam_round_report::printToAll();
+
 	if(!isDefined(level.killcamFailsafe))
 		level thread maps\mp\gametypes\_corrupt_killcam::corrupt_failsafe();
 
@@ -2167,31 +2178,8 @@ endRound(roundwinner, doKillcam)
 		logPrint("W;axis" + winners + "\n");
 		logPrint("L;allies" + losers + "\n");
 	}
-
-	if(game["matchstarted"])
-	{
-		if (level.countdraws == 1)
-			game["roundsplayed"]++;
-		else if(roundwinner != "draw")
-			game["roundsplayed"]++;
-		checkMatchRoundLimit();
-		checkMatchScoreLimit();
-	}
-
-	if(!game["matchstarted"] && roundwinner == "reset")
-	{
-		game["matchstarted"] = true;
-		thread resetScores();
-		game["roundsplayed"] = 0;
-	}
-
+	
 	game["timepassed"] = game["timepassed"] + ((getTime() - level.starttime) / 1000) / 60.0;
-
-	checkTimeLimit();
-
-	if(level.mapended)
-		return;
-	level.mapended = true;
 
 	// for all living players store their weapons
 	players = getentarray("player", "classname");
@@ -2254,6 +2242,29 @@ endRound(roundwinner, doKillcam)
 		game["finaldelay"] = (getTime() - game["finaldelay"]) / 1000;
 		level waittill("corrupt_killcam_over");
 	}
+
+	if(game["matchstarted"])
+	{
+		if (level.countdraws == 1)
+			game["roundsplayed"]++;
+		else if(roundwinner != "draw")
+			game["roundsplayed"]++;
+		checkMatchRoundLimit();
+		checkMatchScoreLimit();
+	}
+
+	if(!game["matchstarted"] && roundwinner == "reset")
+	{
+		game["matchstarted"] = true;
+		thread resetScores();
+		game["roundsplayed"] = 0;
+	}
+
+	checkTimeLimit();
+
+	if(level.mapended)
+		return;
+	level.mapended = true;
 
 	if ( (level.teambalance > 0) && (game["BalanceTeamsNextRound"]) )
 	{
@@ -3250,6 +3261,22 @@ updateGametypeCvars()
 					iprintln("^3The FG42 has been turned ^1OFF!");
 				else
 					iprintln("^3The FG42 has been turned ^2ON!");
+			}
+			
+			showcommand_after_round_report = getCvarInt("pam_afterroundreport");
+			if (showcommand_after_round_report != level.afterroundreport)
+			{
+				level.afterroundreport = showcommand_after_round_report;
+				if (showcommand_after_round_report == 1)
+				{
+					iprintln("^3pam_afterroundreport ^7has been turned ^5ON");
+					iprintln("^9pam_afterroundreport 1");
+				}
+				else if (showcommand_after_round_report == 0)
+				{
+					iprintln("^5pam_afterroundreport ^7has been turned ^1OFF");
+					iprintln("^9pam_afterroundreport 0");
+				}
 			}
 
 			level.checksettings = 0;

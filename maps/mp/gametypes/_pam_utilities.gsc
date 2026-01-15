@@ -11,13 +11,18 @@ Get_Stock_PK3()
 {
 	// List all Allowed PK3 file names HERE separated by a space.  DO NOT include '.pk3'
 	level.stockPK3 = "uomappack00 pakuo07 pakuo06 pakuo05 pakuo04 pakuo03 pakuo02 pakuo01 pakuo00 pakb paka pak9 pak8 pak6 pak5 pak4 pak3 pak2 pak1 pak0 z_svr_na_comp_pam";
+	Get_Custom_PK3();
 }
 
 //The below lines should be updated for each new custom map added to the server
 Get_Custom_PK3()
 {
 	// List all Allowed PK3 file names HERE separated by a space.  DO NOT include '.pk3'
-	level.custommapsPK3 = "wawa_redux bellicourt_v1_1 carcasson_ctf_final cs_office fg_crash JH_Day mp_container mp_Rust mp_uo_railyard_ctf mp_uo_shipment uo_novoutpost z_dust2_ld z_emp_uo_killhosue Z_Nuenen z_xp_hanoi_uo Zzz_ctf_chateau Zzz_lw_railyard zzz_mp_vacant zzz_uo_pavlov_ctf zzz_uo_rocket_ctf zzz_uo_tigertown_ctf zzz_xp_standoff_uo zzzzzz_mp_mikecod3"
+	level.custommapsPK3 = "wawa_redux bellicourt_v1_1 carcasson_ctf_final cs_office fg_crash JH_Day mp_container mp_Rust mp_uo_railyard_ctf mp_uo_shipment uo_novoutpost z_dust2_ld z_emp_uo_killhouse Z_Nuenen z_xp_hanoi_uo Zzz_ctf_chateau Zzz_lw_railyard zzz_mp_vacant zzz_uo_pavlov_ctf zzz_uo_rocket_ctf zzz_uo_tigertown_ctf zzzz_xp_standoff_uo zzzzzz_mp_mikecod3";
+
+
+
+	level.stockPK3 = level.stockPK3 + " " + level.custommapsPK3;
 }
 
 // Compares Known PAM Modes to catch mistakes, needs to be updated if new pam modes are included
@@ -40,6 +45,7 @@ Check_PAM_Modes(pammode)
 		case "mgl":
 		case "bl_classic":
 		case "na_comp":
+		case "na_comp_pub":
 		case "kw":
 		case "pub":
 		case "lan":
@@ -64,6 +70,8 @@ Check_PAM_Modes(pammode)
 			case "twl_classic_ladder":
 			case "twl_classic_league":
 			case "bl":
+			case "na_comp":
+			case "na_comp_pub":
 			case "ga":
 			case "ccodl":
 			case "lan":
@@ -82,6 +90,8 @@ Check_PAM_Modes(pammode)
 			case "pub":
 			case "lan":
 			case "cb":
+			case "na_comp":
+			case "na_comp_pub":
 				return 1;
 
 			default:
@@ -95,6 +105,8 @@ Check_PAM_Modes(pammode)
 			case "twl":
 			case "pub":
 			case "lan":
+			case "na_comp":
+			case "na_comp_pub":
 				return 1;
 
 			default:
@@ -108,6 +120,8 @@ Check_PAM_Modes(pammode)
 			case "twl":
 			case "pub":
 			case "lan":
+			case "na_comp":
+			case "na_comp_pub":
 				return 1;
 
 			default:
@@ -121,6 +135,8 @@ Check_PAM_Modes(pammode)
 			case "twl":
 			case "pub":
 			case "lan":
+			case "na_comp":
+			case "na_comp_pub":
 				return 1;
 
 			default:
@@ -293,6 +309,36 @@ CheckValidTeam(temp_team)
 		default:
 			return false;
 	}
+}
+
+ClientNetworkSync()
+{
+	/*
+	/rate 25000
+	/snaps 30
+	/cl_packetdup 0
+	/com_maxfps 125
+	/cl_maxpackets 125
+	/cl_timenudge -10
+	*/
+	rate = getCvarInt("rate");
+	if(rate == 0) rate = 25000;
+	snaps = getCvarInt("sv_fps");
+	if(snaps == 0) snaps = 30;
+	packetdup = getCvarInt("cl_packetdup");
+	maxfps = getCvarInt("com_maxfps");
+	if(maxfps == 0) maxfps = 125;	
+	maxpackets = getCvarInt("cl_maxpackets");
+	if(maxpackets == 0) maxpackets = 125;
+	//timenudge = getCvarInt("cl_timenudge");
+	//if(timenudge == 0) timenudge = -10;
+	
+	self setClientCvar("rate", rate);
+	self setClientCvar("snaps", snaps);
+	self setClientCvar("cl_packetdup", packetdup);
+	self setClientCvar("com_maxfps", maxfps);
+	self setClientCvar("cl_maxpackets", maxpackets);
+	//self setClientCvar("cl_timenudge", timenudge);
 }
 
 StartPAMUO(reason)
