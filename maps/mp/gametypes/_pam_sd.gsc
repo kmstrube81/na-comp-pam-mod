@@ -597,7 +597,7 @@ Callback_PlayerConnect()
 	self.R_U_Looping = 0;
 
 	self thread maps\mp\gametypes\_pam_round_report::onConnected();
-	self thread maps\mp\gametypes\_pam_utilities::ClientNetworkSync()
+	self thread maps\mp\gametypes\_pam_utilities::ClientNetworkSync();
 	if(level.rdyup == 1)
 	{
 		self.statusicon = game["br_hudicons_allies_0"];
@@ -1245,6 +1245,13 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	delay = 2;	// Delay the player becoming a spectator till after he's done dying
 	wait delay;	// ?? Also required for Callback_PlayerKilled to complete before killcam can execute
+
+	if(level.warmup)
+	{
+		self.spawned = undefined;
+		spawnPlayer();
+		return;
+	}
 
 	if(doKillcam)
 	{

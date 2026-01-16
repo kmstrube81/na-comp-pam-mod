@@ -218,7 +218,7 @@ print()
 	hitLocTexts["right_leg_lower"] = "Leg";
 	hitLocTexts["right_foot"] = "Foot";
 
-	wait 1 * 1;
+	wait 5 * 1;
 
 	//self thread sendDebugInfo();
 
@@ -233,7 +233,7 @@ print()
 		self iprintln(" ");
 		self iprintln(" ");
 		self iprintln(" ");
-		self iprintln(level._prefix + "Round report:");
+		self iprintln("After Round Report:");
 	}
 
 
@@ -379,8 +379,9 @@ getTimeString(time, bombPlanted)
 	if (bombPlanted)
 		return "B " + formatTime((int)(level.countdowntime - (int)((time - level.bombtimerstart)/1000)));
 	else
-		return formatTime(level.z_rpam_strat_time + (int)((level.roundlength * 60) - (int)((time - level.starttime)/1000)));
+		//return formatTime(level.z_rpam_strat_time + (int)((level.roundlength * 60) - (int)((time - level.starttime)/1000)));
 		//return formatTime(level.strat_time + ((level.roundlength * 60) - ((time - level.starttime)/1000)));
+		return formatTime(((level.roundlength * 60) - ((time - level.starttime)/1000)));
 }
 
 // Prints second in format 00:00:00 (hours are printed only if > 0)
