@@ -1663,6 +1663,13 @@ restrict(response)
 					response = "restricted";
 				}
 				break;
+			case "mosin_nagant_mp":
+				if(!getcvar("scr_allow_nagant"))
+				{
+					self iprintln(&"MPSCRIPT_MOSINNAGANT_IS_A_RESTRICTED");
+					response = "restricted";
+				}
+				break;
 			default:
 				self iprintln(&"MPSCRIPT_UNKNOWN_WEAPON_SELECTED");
 				response = "restricted";
