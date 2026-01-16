@@ -982,7 +982,7 @@ Callback_PlayerDisconnect()
 
 Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
-	if(level.warmup != 0) //&& level.warmupdamage == 0)
+	if(level.warmup != 0 && level.warmupdamage == 0)
 		return;			  //uncomment this to allow players to be damaged during warmup
 
 	if(self.sessionteam == "spectator")
@@ -1004,7 +1004,7 @@ Callback_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sW
 	{
 		if(isPlayer(eAttacker) && (self != eAttacker) && (self.pers["team"] == eAttacker.pers["team"]))
 		{
-			if(level.friendlyfire == "1" || sMeansOfDeath == "MOD_CRUSH_TANK" || sMeansOfDeath == "MOD_CRUSH_JEEP") // || (level.warmup && level.warmupdamage))
+			if(level.friendlyfire == "1" || sMeansOfDeath == "MOD_CRUSH_TANK" || sMeansOfDeath == "MOD_CRUSH_JEEP" || (level.warmup && level.warmupdamage))
 			{
 				// Make sure at least one point of damage is done
 				if(iDamage < 1)
