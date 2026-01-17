@@ -3583,6 +3583,7 @@ bombzone_think(bombzone_other)
 					objective_add(0, "current", bombtrigger.origin, "gfx/hud/hud@bombplanted.tga");
 		
 					level.bombplanted = true;
+					level.bombtimerstart = getTime();
 					
 					lpselfnum = other getEntityNumber();
 					lpselfguid = other getGuid();
