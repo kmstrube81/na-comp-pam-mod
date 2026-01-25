@@ -597,7 +597,7 @@ Callback_PlayerConnect()
 	self.R_U_Looping = 0;
 
 	self thread maps\mp\gametypes\_pam_round_report::onConnected();
-	self thread maps\mp\gametypes\_pam_utilities::ClientNetworkSync();
+	//self thread maps\mp\gametypes\_pam_utilities::ClientNetworkSync();
 	if(level.rdyup == 1)
 	{
 		self.statusicon = game["br_hudicons_allies_0"];

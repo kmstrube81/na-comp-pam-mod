@@ -1064,7 +1064,7 @@ spawnPlayer(farthest)
 			}
 		}
 	}
-	else if(level.battlerank && level.rdyup != 1))
+	else if(level.battlerank && level.rdyup != 1)
 	{
 		self.statusicon = maps\mp\gametypes\_rank_gmi::GetRankStatusIcon(self);
 	}	
